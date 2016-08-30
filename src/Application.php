@@ -8,28 +8,28 @@ use Symfony\Component\Console\Application as SymfonyApplication;
 
 class Application extends SymfonyApplication
 {
-	
-	public function __construct()
-	{
-		parent::__construct('Collector', '1');
+    
+    public function __construct()
+    {
+        parent::__construct('Collector', '1');
 
-		// Initialize the config class.
-		Config::getInstance();
-	}
+        // Initialize the config class.
+        Config::getInstance();
+    }
 
-	/**
+    /**
      * Gets the default commands that should always be available.
      *
      * @return array Symfony\Component\Console\Command
      */
-	protected function getDefaultCommands()
-	{
-		return array_merge(parent::getDefaultCommands(), [
-				new Commands\Collect,
-				new Commands\CollectHelpers,
-				new Commands\Tags,
-				new Commands\TestOutput,
-			]);
-	}
+    protected function getDefaultCommands()
+    {
+        return array_merge(parent::getDefaultCommands(), [
+                new Commands\Collect,
+                new Commands\CollectHelpers,
+                new Commands\Tags,
+                new Commands\TestOutput,
+            ]);
+    }
 
 }
