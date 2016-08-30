@@ -2,11 +2,8 @@
 
 namespace Collector;
 
-use Collector\Commands\Tags;
+use Collector\Commands;
 use Collector\Support\Config;
-use Collector\Commands\Collect;
-use Collector\Commands\TestOutput;
-use Collector\Commands\CollectHelpers;
 use Symfony\Component\Console\Application as SymfonyApplication;
 
 class Application extends SymfonyApplication
@@ -24,13 +21,18 @@ class Application extends SymfonyApplication
 		Config::getInstance();
 	}
 
+	/**
+     * Gets the default commands that should always be available.
+     *
+     * @return array Symfony\Component\Console\Command
+     */
 	protected function getDefaultCommands()
 	{
 		return array_merge(parent::getDefaultCommands(), [
-				new Collect,
-				new CollectHelpers,
-				new Tags,
-				new TestOutput,
+				new Commands\Collect,
+				new Commands\CollectHelpers,
+				new Commands\Tags,
+				new Commands\TestOutput,
 			]);
 	}
 
