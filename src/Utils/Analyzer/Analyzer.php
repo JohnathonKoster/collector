@@ -252,23 +252,6 @@ class Analyzer
     }
 
     /**
-     * Gets the traits used in the current source.
-     * 
-     * @return array
-     */
-    public function getTraitsUsed()
-    {
-        $traverser = new NodeTraverser;
-        $visitor   = new TraitUsedVisitor;
-
-        $traverser->addVisitor($visitor);
-        $traverser->traverse($this->statements);
-        $traits = $visitor->getTraitsUsed();
-
-        return $traits;
-    }
-
-    /**
      * Gets the class name for the current source.
      *
      * @return string
