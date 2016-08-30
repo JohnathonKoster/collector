@@ -11,9 +11,9 @@ class Config
 
 	protected $configurationValues = [];
 
-	protected function __construct()
+	protected function __construct($path)
 	{
-		foreach (new DirectoryIterator(__DIR__.'/../../config/') as $fileInfo) {
+		foreach (new DirectoryIterator($path) as $fileInfo) {
 			if (!$fileInfo->isDot() && $fileInfo->isFile()) {
 				$path = $fileInfo->getPathname();
 				$this->configurationValues[$fileInfo->getBasename('.'.$fileInfo->getExtension())] = require_once $path;
@@ -31,10 +31,10 @@ class Config
 	 *
 	 * @return Config
 	 */
-	public static function getInstance()
+	public static function getInstance($path = null)
 	{
 		if (static::$instance === null) {
-			static::$instance = new static();
+			static::$instance = new static($path);
 		}
 
 		return static::$instance;

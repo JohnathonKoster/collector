@@ -14,7 +14,7 @@ class Application extends SymfonyApplication
         parent::__construct('Collector', '1');
 
         // Initialize the config class.
-        Config::getInstance();
+        Config::getInstance(__DIR__.'/../config');
     }
 
     /**
