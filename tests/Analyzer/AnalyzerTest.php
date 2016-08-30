@@ -1,5 +1,6 @@
 <?php
 
+use PhpParser\Node\Name;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Function_;
 use Collector\Utils\Analyzer\Analyzer;
@@ -102,6 +103,13 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 		$calledFunctions = $this->analyzer->analyze($this->getFile('DefinedFunctions'))->getFunctionCalls(true);
 		$this->assertCount(2, $calledFunctions);
 		$this->assertInstanceOf(FuncCall::class, $calledFunctions[0]);
+	}
+
+	public function testThatAnalyzerGetsNamespace()
+	{
+		$namespace = $this->analyzer->analyze('<?php namespace Illuminate\Support\Traits;')->getNamespace();
+		$this->assertInstanceOf(Name::class, $namespace);
+		$this->assertEquals('Illuminate\Support\Traits', (string) $namespace);
 	}
 
 }
