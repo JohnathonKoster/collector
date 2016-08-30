@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Super simple configuration stuff.
+ * Gets the value for the provided configuration key.
  *
  * @param  string
  * @return mixed
