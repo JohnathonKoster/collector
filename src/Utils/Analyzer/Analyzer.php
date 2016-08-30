@@ -33,8 +33,6 @@ class Analyzer
 
 	public static $previouslyAnalyzed = [];
 
-	public static $CHECK = 'Illuminate\Support\Traits\Macroable';
-
 	public function __construct()
 	{
 		$this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
