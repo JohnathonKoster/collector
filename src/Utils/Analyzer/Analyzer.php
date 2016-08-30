@@ -79,6 +79,16 @@ class Analyzer
     }
 
     /**
+     * Gets the source directory.
+     * 
+     * @return string
+     */
+    public function getSourceDirectory()
+    {
+        return $this->sourceDirectory;
+    }
+
+    /**
      * Analyzes the source.
      *
      * @param  string $source
@@ -91,6 +101,16 @@ class Analyzer
         $this->statements = $this->parser->parse($source);
 
         return $this;
+    }
+
+    /**
+     * Gets the source code that is being analyzed.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return $this->source;
     }
 
     /**
@@ -130,6 +150,10 @@ class Analyzer
     public function printUses(array $statements, $limitToDiscoveredDependencies = false)
     {
         $printer = new StandardPrinter;
+
+        $statements = array_filter($statements, function($statement) {
+            return $statement instanceof Use_;
+        });
 
         if ($limitToDiscoveredDependencies) {
             $newStatements = [];
