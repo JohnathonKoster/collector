@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+// Load this up.
+require_once __DIR__.'/vendor/autoload.php';
+
+$app = new Collector\Application;
+$app->run();

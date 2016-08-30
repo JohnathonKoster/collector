@@ -1,0 +1,28 @@
+{
+    "name": "stillat/collector",
+    "description": "Sorcery to automatically split the Collection component from the Laravel code-base.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Johnathon Koster",
+            "email": "john@stillat.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "^3.1",
+        "symfony/process": "^3.1",
+        "nikic/php-parser": "^1.2.1|~2.0",
+        "knplabs/github-api": "^1.7",
+        "php-http/guzzle6-adapter": "^1.1",
+        "mockery/mockery": "~0.9.4",
+        "phpunit/phpunit": "~4.1"
+    },
+    "autoload": {
+        "files": [
+            "src/Support/helpers.php"
+        ],
+        "psr-4": {
+            "Collector\\": "src/"
+        }
+    }
+}
