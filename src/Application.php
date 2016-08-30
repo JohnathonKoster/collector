@@ -8,11 +8,7 @@ use Symfony\Component\Console\Application as SymfonyApplication;
 
 class Application extends SymfonyApplication
 {
-
-	private static $instance;
-
-	protected $loader;
-
+	
 	public function __construct()
 	{
 		parent::__construct('Collector', '1');
