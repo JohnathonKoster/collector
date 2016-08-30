@@ -3,7 +3,6 @@
 namespace Collector\Utils\Analyzer;
 
 use PhpParser\Error;
-
 use Collector\Utils\File;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -21,302 +20,351 @@ use Collector\Utils\Analyzer\Visitors\FunctionDefinitionVisitor;
 class Analyzer
 {
 
-	protected $source = '';
+    /**
+     * The source code to analyze.
+     * 
+     * @var string
+     */
+    protected $source = '';
 
-	protected $parser;
+    /**
+     * The Parser instance.
+     * 
+     * @var PhpParser\ParserAbstract
+     */
+    protected $parser;
 
-	public $statements;
+    /**
+     * An array of statements.
+     * 
+     * @var array
+     */
+    protected $statements;
 
-	protected $sourceDirectory = null;
+    /**
+     * The directory to look for additional dependencies in.
+     * 
+     * @var null|string
+     */
+    protected $sourceDirectory = null;
 
-	protected $file;
+    /**
+     * The File instance.
+     * 
+     * @var File
+     */
+    protected $file;
 
-	public static $previouslyAnalyzed = [];
+    /**
+     * A maintained list of previously analyzed classes, traits, etc.
+     * 
+     * @var array
+     */
+    public static $previouslyAnalyzed = [];
 
-	public function __construct()
-	{
-		$this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-		$this->file   = new File;
-	}
+    public function __construct()
+    {
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $this->file   = new File;
+    }
 
-	/**
-	 * Sets the source directory.
-	 *
-	 * @param string $directory
-	 */
-	public function setSourceDirectory($directory)
-	{
-		$this->sourceDirectory = $directory;
-	}
+    /**
+     * Sets the source directory.
+     *
+     * @param string $directory
+     */
+    public function setSourceDirectory($directory)
+    {
+        $this->sourceDirectory = $directory;
+    }
 
-	/**
-	 * Analyzes the source.
-	 *
-	 * @param  string $source
-	 *
-	 * @return Analyzer
-	 */
-	public function analyze($source)
-	{
-		$this->source = $source;
-		$this->statements = $this->parser->parse($source);
-		return $this;
-	}
+    /**
+     * Analyzes the source.
+     *
+     * @param  string $source
+     *
+     * @return Analyzer
+     */
+    public function analyze($source)
+    {
+        $this->source = $source;
+        $this->statements = $this->parser->parse($source);
 
-	/**
-	 * Returns the statements for the current source.
-	 *
-	 * @return array
-	 */
-	public function statements()
-	{		
-		return $this->statements;
-	}
+        return $this;
+    }
 
-	public function getUsingStatements()
-	{
-		$traverser = new NodeTraverser;
-		$visitor   = new UseDependencyVisitor;
-		$traverser->addVisitor($visitor);
+    /**
+     * Returns the statements for the current source.
+     *
+     * @return array
+     */
+    public function statements()
+    {       
+        return $this->statements;
+    }
 
-		$traverser->traverse($this->statements);
+    /**
+     * Gets the "use" statements for the current source.
+     * 
+     * @return array
+     */
+    public function getUsingStatements()
+    {
+        $traverser = new NodeTraverser;
+        $visitor   = new UseDependencyVisitor;
 
-		return $visitor->getUseStatements();
-	}
+        $traverser->addVisitor($visitor);
+        $traverser->traverse($this->statements);
 
-	public function printUses($statements, $limitToDiscoveredDependencies = false)
-	{
-		$printer = new StandardPrinter;
+        return $visitor->getUseStatements();
+    }
 
-		if ($limitToDiscoveredDependencies) {
-			$newStatements = [];
-			foreach ($statements as $statement) {
-				if ($statement instanceof Use_) {
-					$name = $statement->uses[0]->name->toString();
-					if (in_array($name, self::$previouslyAnalyzed)) {
-						$newStatements[] = $statement;
-					}
-				}
-			}
-			$statements = $newStatements;
-		}
+    /**
+     * Prints a usable code snippet containing the provided "use" statements.
+     * 
+     * @param  array   $statements
+     * @param  boolean $limitToDiscoveredDependencies
+     * 
+     * @return string
+     */
+    public function printUses(array $statements, $limitToDiscoveredDependencies = false)
+    {
+        $printer = new StandardPrinter;
 
-		$code = $printer->prettyPrintFile($statements);
+        if ($limitToDiscoveredDependencies) {
+            $newStatements = [];
+            foreach ($statements as $statement) {
+                if ($statement instanceof Use_) {
+                    $name = $statement->uses[0]->name->toString();
+                    if (in_array($name, self::$previouslyAnalyzed)) {
+                        $newStatements[] = $statement;
+                    }
+                }
+            }
+            $statements = $newStatements;
+        }
 
-		return $code;
-	}
+        $code = $printer->prettyPrintFile($statements);
 
-	/**
-	 * Get the functions defined in a source file.
-	 *
-	 * @param  boolean $returnNodes
-	 *
-	 * @return FunctionDefinitionVisitor|array
-	 */
-	public function getDefinedFunctions($returnNodes = false)
-	{
-		$traverser = new NodeTraverser;
-		$visitor   = new FunctionDefinitionVisitor;
-		$traverser->addVisitor($visitor);
+        return $code;
+    }
 
-		$traverser->traverse($this->statements);
-		$functionsFound = $visitor->getFunctionDefinitions();
+    /**
+     * Get the functions defined in a source file.
+     *
+     * @param  boolean $returnNodes
+     *
+     * @return array
+     */
+    public function getDefinedFunctions($returnNodes = false)
+    {
+        $traverser = new NodeTraverser;
+        $visitor   = new FunctionDefinitionVisitor;
+        $traverser->addVisitor($visitor);
 
-		if ($returnNodes) {
-			return $functionsFound;
-		}
+        $traverser->traverse($this->statements);
+        $functionsFound = $visitor->getFunctionDefinitions();
 
-		$functions = [];
+        if ($returnNodes) {
+            return $functionsFound;
+        }
 
-		foreach ($functionsFound as $func) {
-			$functions[] = $func->name;
-		}
+        $functions = [];
 
-		return $functions;
-	}
+        foreach ($functionsFound as $func) {
+            $functions[] = $func->name;
+        }
 
-	/**
-	 * Get the functions called in a source file.
-	 *
-	 * @param  boolean $returnNodes
-	 *
-	 * @return FunctionDefinitionVisitor|array
-	 */
-	public function getFunctionCalls($returnNodes = false)
-	{
-		$traverser = new NodeTraverser;
-		$visitor   = new FunctionCallVisitor;
-		$traverser->addVisitor($visitor);
+        return $functions;
+    }
 
-		$traverser->traverse($this->statements);
-		$calledFunctions = $visitor->getFunctionCalls();
+    /**
+     * Get the functions called in a source file.
+     *
+     * @param  boolean $returnNodes
+     *
+     * @return array
+     */
+    public function getFunctionCalls($returnNodes = false)
+    {
+        $traverser = new NodeTraverser;
+        $visitor   = new FunctionCallVisitor;
+        $traverser->addVisitor($visitor);
 
-		if ($returnNodes) {
-			return $calledFunctions;
-		}
+        $traverser->traverse($this->statements);
+        $calledFunctions = $visitor->getFunctionCalls();
 
-		$calls = [];
+        if ($returnNodes) {
+            return $calledFunctions;
+        }
 
-		foreach ($calledFunctions as $func) {
-			$calls[] = $func->name->getFirst();
-		}
+        $calls = [];
 
-		return $calls;
-	}
+        foreach ($calledFunctions as $func) {
+            $calls[] = $func->name->getFirst();
+        }
 
-	/**
-	 * Gets the namespace for the current source.
-	 *
-	 * @return string
-	 */
-	public function getNamespace()
-	{
-		$traverser = new NodeTraverser;
-		$visitor   = new NameResolverVisitor;
-		$traverser->addVisitor($visitor);
-		$traverser->traverse($this->statements);
-		$namespace = $visitor->getNamespace();
+        return $calls;
+    }
 
-		if ($namespace === null) {
-			return '';
-		}
+    /**
+     * Gets the namespace for the current source.
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        $traverser = new NodeTraverser;
+        $visitor   = new NameResolverVisitor;
+        $traverser->addVisitor($visitor);
+        $traverser->traverse($this->statements);
+        $namespace = $visitor->getNamespace();
 
-		return $namespace;
-	}
+        if ($namespace === null) {
+            return '';
+        }
 
-	public function getTraitsUsed()
-	{
-		$traverser = new NodeTraverser;
-		$visitor   = new TraitUsedVisitor;
-		$traverser->addVisitor($visitor);
-		$traverser->traverse($this->statements);
+        return $namespace;
+    }
 
-		$traits = $visitor->getTraitsUsed();
+    /**
+     * Gets the traits used in the current source.
+     * 
+     * @return array
+     */
+    public function getTraitsUsed()
+    {
+        $traverser = new NodeTraverser;
+        $visitor   = new TraitUsedVisitor;
 
-		return $traits;
-	}
+        $traverser->addVisitor($visitor);
+        $traverser->traverse($this->statements);
+        $traits = $visitor->getTraitsUsed();
 
-	/**
-	 * Gets the class name for the current source.
-	 *
-	 * @return string
-	 */
-	public function getClass()
-	{
-		$traverser = new NodeTraverser;
-		$visitor   = new ClassVisitor;
-		$traverser->addVisitor($visitor);
-		$traverser->traverse($this->statements);
+        return $traits;
+    }
 
-		$namespace = $this->getNamespace();
+    /**
+     * Gets the class name for the current source.
+     *
+     * @return string
+     */
+    public function getClass()
+    {
+        $traverser = new NodeTraverser;
+        $visitor   = new ClassVisitor;
 
-		$className = '';
+        $traverser->addVisitor($visitor);
+        $traverser->traverse($this->statements);
+        $namespace = $this->getNamespace();
 
-		if ($visitor->getClass() !== null) {
-			$className = $visitor->getClass()->name;
-		}
+        $className = '';
 
-
-		return "{$namespace}\\{$className}";
-	}
-
-	/**
-	 * Get the dependencies for the current source.
-	 *
-	 * @param  boolean $returnNodes
-	 *
-	 * @return UseDependencyVisitor|array
-	 */
-	public function getDependencies($returnNodes = false)
-	{
-		// Resolve the names for the current scope. This
-		// is important, especially when dealing with
-		// static method calls from classes within
-		// the current namespace. i.e., Arr::()
-		$currentNamespace = $this->getNamespace();
-		$currentClass     = $this->getClass();
-
-		// Add the current class to the list
-		// of previously analyzed objects.
-		self::$previouslyAnalyzed[] = $currentClass;
-
-		$traverser = new NodeTraverser;
-		$visitor   = new UseDependencyVisitor;
-		$staticCallVisitor = new StaticCallVisitor;
-		$traitsUsedVisitor = new TraitUsedVisitor;
-		$traverser->addVisitor($visitor);
-		$traverser->addVisitor($staticCallVisitor);
-		$traverser->addVisitor($traitsUsedVisitor);
-		$traverser->traverse($this->statements);
-		$useStatements = $visitor->getUseStatements();
+        if ($visitor->getClass() !== null) {
+            $className = $visitor->getClass()->name;
+        }
 
 
-		if ($returnNodes == true) {
-			return $useStatements;
-		}
+        return "{$namespace}\\{$className}";
+    }
 
-		$uses = [];
+    /**
+     * Get the dependencies for the current source.
+     *
+     * @param  boolean $returnNodes
+     *
+     * @return UseDependencyVisitor|array
+     */
+    public function getDependencies($returnNodes = false)
+    {
+        // Resolve the names for the current scope. This
+        // is important, especially when dealing with
+        // static method calls from classes within
+        // the current namespace. i.e., Arr::()
+        $currentNamespace = $this->getNamespace();
+        $currentClass     = $this->getClass();
 
-		// Get them pesky static calls.
-		$staticCalls = $staticCallVisitor->getStaticCalls();
-		$calls = [];
+        // Add the current class to the list
+        // of previously analyzed objects.
+        self::$previouslyAnalyzed[] = $currentClass;
 
-		// Add the static calls to the $uses array.
-		foreach ($staticCalls as $call) {
-			$className = $call->class->toString();
-			$calls[] = $className;
-			$uses[] = $className;
-		}
+        $traverser         = new NodeTraverser;
+        $visitor           = new UseDependencyVisitor;
+        $staticCallVisitor = new StaticCallVisitor;
+        $traitsUsedVisitor = new TraitUsedVisitor;
 
-		// Add the explicit use statements to the array.
-		foreach ($useStatements as $use) {
-			$name = '';
+        $traverser->addVisitor($visitor);
+        $traverser->addVisitor($staticCallVisitor);
+        $traverser->addVisitor($traitsUsedVisitor);
+        $traverser->traverse($this->statements);
+        $useStatements = $visitor->getUseStatements();
 
-			if ($use instanceof Use_) {
-				$name = $use->uses[0]->name->toString();
 
-				// For now we will just assume that if any dependency
-				// does not have more that one part to its name it
-				// belongs to the core PHP framework offerings.
-				if (count($use->uses[0]->name->parts) == 1 && !in_array($name, self::$previouslyAnalyzed)) {
-					self::$previouslyAnalyzed[] = $name;
-					continue;
-				}
-			} elseif ($use instanceof TraitUse) {
-				$name = $use->traits[0]->toString();
-			}
+        if ($returnNodes == true) {
+            return $useStatements;
+        }
 
-			$uses[] = $name;
-		}
+        $uses = [];
 
-		$uses = array_unique($uses);
+        // Get them pesky static calls.
+        $staticCalls = $staticCallVisitor->getStaticCalls();
+        $calls = [];
 
-		// If there is a source directory set, we will recursively analyze the
-		// dependencies that have been declared in the current class. This
-		// will also be able to find any implicit dependencies, such as
-		// those classes that are called statically in the namespace.
-		if ($this->sourceDirectory !== null) {
-			foreach ($uses as $use) {
-				if (!in_array($use, self::$previouslyAnalyzed)) {
-					$usePath = $this->file->normalizePath($this->sourceDirectory."/src/{$use}.php");
-					if (file_exists($usePath)) {
+        // Add the static calls to the $uses array.
+        foreach ($staticCalls as $call) {
+            $className = $call->class->toString();
+            $calls[] = $className;
+            $uses[] = $className;
+        }
 
-						$analyzer = new self;
-						$analyzer->setSourceDirectory($this->sourceDirectory);
-						$nestedDependencies = $analyzer->analyze(file_get_contents($usePath))->getDependencies();
+        // Add the explicit use statements to the array.
+        foreach ($useStatements as $use) {
+            $name = '';
 
-						// Again, just another way to make sure we are only returning
-						// namespaced class names to not include PHP classes, etc.
-						$uses = array_merge($uses, array_filter($nestedDependencies, function ($dependency) {
-							return count(explode('\\', $dependency) > 1);
-						}));
-					}
-				}
-			}
-		}
+            if ($use instanceof Use_) {
+                $name = $use->uses[0]->name->toString();
 
-		return $uses;
-	}
+                // For now we will just assume that if any dependency
+                // does not have more that one part to its name it
+                // belongs to the core PHP framework offerings.
+                if (count($use->uses[0]->name->parts) == 1 && !in_array($name, self::$previouslyAnalyzed)) {
+                    self::$previouslyAnalyzed[] = $name;
+                    continue;
+                }
+            } elseif ($use instanceof TraitUse) {
+                $name = $use->traits[0]->toString();
+            }
 
+            $uses[] = $name;
+        }
+
+        $uses = array_unique($uses);
+
+        // If there is a source directory set, we will recursively analyze the
+        // dependencies that have been declared in the current class. This
+        // will also be able to find any implicit dependencies, such as
+        // those classes that are called statically in the namespace.
+        if ($this->sourceDirectory !== null) {
+            foreach ($uses as $use) {
+                if (!in_array($use, self::$previouslyAnalyzed)) {
+                    $usePath = $this->file->normalizePath($this->sourceDirectory."/src/{$use}.php");
+                    if (file_exists($usePath)) {
+
+                        $analyzer = new self;
+                        $analyzer->setSourceDirectory($this->sourceDirectory);
+                        $nestedDependencies = $analyzer->analyze(file_get_contents($usePath))->getDependencies();
+
+                        // Again, just another way to make sure we are only returning
+                        // namespaced class names to not include PHP classes, etc.
+                        $uses = array_merge($uses, array_filter($nestedDependencies, function ($dependency) {
+                            return count(explode('\\', $dependency) > 1);
+                        }));
+                    }
+                }
+            }
+        }
+
+        return $uses;
+    }
 
 }
