@@ -199,7 +199,7 @@ class Analyzer
             $functions[] = $func->name;
         }
 
-        return $functions;
+        return array_unique($functions);
     }
 
     /**
@@ -228,7 +228,7 @@ class Analyzer
             $calls[] = $func->name->getFirst();
         }
 
-        return $calls;
+        return array_unique($calls);
     }
 
     /**

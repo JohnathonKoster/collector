@@ -1,6 +1,7 @@
 <?php
 
-
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Stmt\Function_;
 use Collector\Utils\Analyzer\Analyzer;
 
 class AnalyzerTest extends PHPUnit_Framework_TestCase
@@ -72,6 +73,35 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
 		$code = $this->analyzer->printUses($using, true);
 		$this->assertEquals($this->getExpected('UsingStatements_Limited'), $code);
+	}
+
+	public function testThatAnalyzerGetsDefinedFunctions()
+	{
+		$functions = $this->analyzer->analyze($this->getFile('DefinedFunctions'))->getDefinedFunctions();
+		$this->assertContains('array_only', $functions);
+		$this->assertContains('array_pluck', $functions);
+		$this->assertCount(2, $functions);
+	}
+
+	public function testThatAnalyzeCanReturnNodesForDefinedFunctions()
+	{
+		$functions = $this->analyzer->analyze($this->getFile('DefinedFunctions'))->getDefinedFunctions(true);
+		$this->assertCount(2, $functions);
+		$this->assertInstanceOf(Function_::class, $functions[0]);
+	}
+
+	public function testThatAnalyzerCanFindFunctionsCalls()
+	{
+		$calledFunctions = $this->analyzer->analyze($this->getFile('DefinedFunctions'))->getFunctionCalls();
+		$this->assertCount(1, $calledFunctions);
+		$this->assertContains('function_exists', $calledFunctions);
+	}
+
+	public function testThatAnalyzerCanReturnNodesForDefinedFunctions()
+	{
+		$calledFunctions = $this->analyzer->analyze($this->getFile('DefinedFunctions'))->getFunctionCalls(true);
+		$this->assertCount(2, $calledFunctions);
+		$this->assertInstanceOf(FuncCall::class, $calledFunctions[0]);
 	}
 
 }
