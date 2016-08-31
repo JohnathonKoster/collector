@@ -272,6 +272,12 @@ class File
 		}
 	}
 
+	/**
+	 * Copies multiple stubs to the destination directory.
+	 * 
+	 * @param  array  $stubs
+	 * @param  string $to
+	 */
 	public function copyStubs(array $stubs, $to) {
 		foreach ($stubs as $stub) {
 			$this->copyStub($stub, $to);

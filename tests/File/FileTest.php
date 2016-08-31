@@ -1,5 +1,6 @@
 <?php
 
+use Mockery as m;
 use Collector\Utils\File;
 use Collector\Support\Config;
 use Collector\Utils\FilesystemVirtualization\Assertions;
@@ -155,6 +156,40 @@ class FileTest extends PHPUnit_Framework_TestCase
 			normalize_line_endings(file_get_contents($virtualStubPath)),
 			normalize_line_endings(file_get_contents($virutalDestinationStub))
 		);
+	}
+
+	public function testThatFileWillCopyMultipleFiles()
+	{
+		$testFilesLocation  = $this->getCodePath().'/src/Illuminate/Contracts/Support/';
+		$virutalDestination = $this->getPath('virtual/destination/');
+
+		$this->file->copyFiles([
+			'Arrayable.php',
+			'Jsonable.php'
+		], $testFilesLocation, $virutalDestination);
+
+		$this->assertFileExists($this->getPath('virtual/destination/Arrayable.php'));
+		$this->assertFileExists($this->getPath('virtual/destination/Jsonable.php'));
+	}
+
+	public function testThatFileCopyMultipleStubs()
+	{
+		$localCodePath             = $this->getCodePath().'/ClassName.php';
+		$localCodePathTwo          = $this->getCodePath().'/DefinedFunctions.php';
+		$virtualStubPath           = $this->getPath('storage/stubs/ClassName.php');
+		$virtualStubPathTwo        = $this->getPath('storage/stubs/DefinedFunctions.php');
+		$virtualDestination        = $this->getPath('virtual/destination/');
+		$virutalDestinationStub    = $this->getPath('virtual/destination/ClassName.php');
+		$virutalDestinationStubTwo = $this->getPath('virtual/destination/DefinedFunctions.php');
+
+
+		$this->file->copyFile($localCodePath, $virtualStubPath);	
+		$this->file->copyFile($localCodePath, $virtualStubPathTwo);
+
+		$this->file->copyStubs(['ClassName.php', 'DefinedFunctions.php'], $virtualDestination);
+
+		$this->assertFileExists($virutalDestinationStub);
+		$this->assertFileExists($virutalDestinationStubTwo);
 	}
 
 }
