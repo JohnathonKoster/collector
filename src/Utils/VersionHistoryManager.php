@@ -19,10 +19,19 @@ class VersionHistoryManager
 	 */
 	protected $cachedHistory = [];
 
-	public function __construct()
+	/**
+	 * Loads the history file at the given path.
+	 * 
+	 * @param  string $pathToHistory
+	 * 
+	 * @return array
+	 */
+	public function load($pathToHistory)
 	{
-		$this->splitHistoryFile = __DIR__.'/../storage/cache/tags/split.json';
-		$this->cachedHistory = $this->getSplitHistory();
+		$this->splitHistoryFile = $pathToHistory;
+		$this->cachedHistory    = $this->getSplitHistory();
+
+		return $this->cachedHistory;
 	}
 
 	/**
@@ -53,7 +62,7 @@ class VersionHistoryManager
 		$history = array_unique(array_merge($history, $splitVersion));
 		file_put_contents($this->splitHistoryFile, json_encode($history));
 		$this->cachedHistory = $history;
-		
+
 		return $history;
 	}
 
