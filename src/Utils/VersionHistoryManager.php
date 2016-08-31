@@ -53,6 +53,7 @@ class VersionHistoryManager
 		$history = array_unique(array_merge($history, $splitVersion));
 		file_put_contents($this->splitHistoryFile, json_encode($history));
 		$this->cachedHistory = $history;
+		
 		return $history;
 	}
 
