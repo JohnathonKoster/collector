@@ -5,8 +5,18 @@ namespace Collector\Utils;
 class VersionHistoryManager
 {
 
+	/**
+	 * The path to the version history file.
+	 * 
+	 * @var string
+	 */
 	protected $splitHistoryFile;
 
+	/**
+	 * The cached history items.
+	 * 
+	 * @var array
+	 */
 	protected $cachedHistory = [];
 
 	public function __construct()
@@ -15,16 +25,27 @@ class VersionHistoryManager
 		$this->cachedHistory = $this->getSplitHistory();
 	}
 
+	/**
+	 * Creates the history file if it doesn't exit.
+	 * 
+	 */
 	protected function ensureHistoryExists()
 	{
-		if (!file_exists($this->splitHistoryFile)) {
+		if (! file_exists($this->splitHistoryFile)) {
 			file_put_contents($this->splitHistoryFile, json_encode([]));
 		}
 	}
 
+	/**
+	 * Adds a version to the split history.
+	 * 
+	 * @param  string $splitVersion
+	 *
+	 * @return array
+	 */
 	public function addSplitToHistory($splitVersion)
 	{
-		if (!is_array($splitVersion)) {
+		if (! is_array($splitVersion)) {
 			$splitVersion = (array) $splitVersion;
 		}
 
@@ -35,6 +56,11 @@ class VersionHistoryManager
 		return $history;
 	}
 
+	/**
+	 * Gets the split version history.
+	 * 
+	 * @return array
+	 */
 	public function getSplitHistory()
 	{
 		$this->ensureHistoryExists();
@@ -47,6 +73,13 @@ class VersionHistoryManager
 		return $history;
 	}
 
+	/**
+	 * Determines if a version exists in history.
+	 * 
+	 * @param  string $version
+	 * 
+	 * @return bool
+	 */
 	public function existsInHistory($version)
 	{
 		return in_array($version, $this->cachedHistory);
