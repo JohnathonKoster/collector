@@ -32,6 +32,21 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->file->setCollectorRoot($this->getPath());
 	}
 
+	protected function getCodePath()
+	{
+		return realpath(__DIR__.'/../files/code').'/';
+	}
+
+	protected function getFile($sourceFile)
+	{
+		return normalize_line_endings(file_get_contents($this->getCodePath().$sourceFile.'.php'));
+	}
+
+	protected function getExpected($sourceFile)
+	{
+		return normalize_line_endings(file_get_contents(__DIR__.'/../files/expected_code/'.$sourceFile.'.php'));
+	}
+
 	public function tearDown()
 	{
 		$this->tearDownVfs();
@@ -83,6 +98,33 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->file->makeDir($dirPath);
 		$this->assertTrue(file_exists($dirPath));
 		$this->assertTrue(is_dir($dirPath));
+	}
+
+	public function testThatClassReplacementsCanReplaceFromConfig()
+	{
+		$path = $this->getPath('test.php');
+		file_put_contents($path, $this->getFile('ClassReplacement'));
+		$contents = $this->file->doClassReplacements($path);
+		$this->assertEquals($contents, file_get_contents($path));
+
+		$stuff = include $path;
+		$this->assertEquals('Illuminate\Support\Collection', $stuff['Illuminate\Support\Collection']);
+		$this->assertEquals('Illuminate\Database\Eloquent\Collection', $stuff['Illuminate\Database\Eloquent\Collection']);
+	}
+
+	public function testThatClassReplacementsCanBeOverriden()
+	{
+		$path = $this->getPath('test.php');
+		file_put_contents($path, $this->getFile('ClassReplacement'));
+		$contents = $this->file->doClassReplacements($path, [
+			'Illuminate\Database\Eloquent\Collection' => 'overriden_first',
+        	'Test\Class\Name' => 'overriden_second',
+		]);
+		$this->assertEquals($contents, file_get_contents($path));
+
+		$stuff = include $path;
+		$this->assertEquals('overriden_first',  $stuff['overriden_first']);
+		$this->assertEquals('overriden_second', $stuff['overriden_second']);
 	}
 
 }

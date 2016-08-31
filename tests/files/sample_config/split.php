@@ -92,6 +92,7 @@ return [
 
     'replace_class' => [
         'Illuminate\Database\Eloquent\Collection' => 'Illuminate\Support\Collection',
+        'Test\Class\Name' => 'Illuminate\Database\Eloquent\Collection',
     ],
 
 ];
