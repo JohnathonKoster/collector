@@ -11,8 +11,18 @@ class FileTest extends PHPUnit_Framework_TestCase
 		FilesystemVirtualization::getPath insteadof Assertions;
 	}
 
+	/**
+	 * A File instnace.
+	 * 
+	 * @var File
+	 */
 	protected $file;
 
+	/**
+	 * The virtual path.
+	 *
+	 * @var string
+	 */
 	protected $virtualPath = 'fst';
 
 	public function setUp()
