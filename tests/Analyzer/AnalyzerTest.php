@@ -20,12 +20,12 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
 	protected function getFile($sourceFile)
 	{
-		return file_get_contents(__DIR__.'/../files/code/'.$sourceFile.'.php');
+		return normalize_line_endings(file_get_contents(__DIR__.'/../files/code/'.$sourceFile.'.php'));
 	}
 
 	protected function getExpected($sourceFile)
 	{
-		return file_get_contents(__DIR__.'/../files/expected_code/'.$sourceFile.'.php');
+		return normalize_line_endings(file_get_contents(__DIR__.'/../files/expected_code/'.$sourceFile.'.php'));
 	}
 
 	public function testThatAnalyzerReturnsCorrectSource()
