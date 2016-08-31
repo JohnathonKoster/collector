@@ -51,7 +51,7 @@ class File
 	 */
 	public function getTempDirectory($version)
 	{
-		$path = __DIR__.'/../../'.config('split.source').'/'.$version;
+		$path = $this->collectorRoot.config('split.source').'/'.$version;
 
 		$this->makeDir($path);
 		return realpath($path);
