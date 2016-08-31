@@ -192,7 +192,7 @@ class File
 	 */
 	public function doClassReplacements($path, array $replacements = []) {
 
-		$path     = $this->normalizePath($path);
+		$path = $this->normalizePath($path);
 
 		if (count($replacements) == 0) {
 			$replacements = config('split.replace_class');
