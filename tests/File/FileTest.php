@@ -45,4 +45,21 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertFileExists($dir);
 	}
 
+	public function testThatFileReturnsStandardDirectories()
+	{
+		$dirs = $this->file->getDirectories('5.3.22', '5.3.22');
+		
+		$this->assertTrue(is_object($dirs));
+
+		$dirs = (array) $dirs;
+		$this->assertArrayHasKey('output', $dirs);
+		$this->assertArrayHasKey('source', $dirs);
+		$this->assertArrayHasKey('support', $dirs);
+		$this->assertArrayHasKey('contracts', $dirs);
+		$this->assertArrayHasKey('helpers', $dirs);
+		$this->assertArrayHasKey('collection', $dirs);
+		$this->assertFileExists($dirs['output']);
+		$this->assertFileExists($dirs['source']);
+	}
+
 }

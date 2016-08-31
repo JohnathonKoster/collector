@@ -53,7 +53,7 @@ class File
 	{
 		$path = $this->collectorRoot.config('split.source').'/'.$version;
 		$this->makeDir($path);
-		
+
 		return $path;
 	}
 
@@ -72,6 +72,14 @@ class File
 		return $path;
 	}
 
+	/**
+	 * Gets the standard directories used by most split versions.
+	 *
+	 * @param      <type>  $remote       The remote
+	 * @param      <type>  $destination  The destination
+	 *
+	 * @return     <type>  The directories.
+	 */
 	public function getDirectories($remote, $destination)
 	{
 		$outputDirectory    = $this->getOutputDirectory($destination);
@@ -81,16 +89,14 @@ class File
 		$collectionPath     = $supportDirectory.'/Collection.php';
 		$helpersFile        = $sourceDirectory.'/src/Illuminate/Support/helpers.php';
 
-		return (object) array_map(function($path) {
-			return realpath($path);
-		}, [
+		return (object) [
 			'output'        => $outputDirectory,
 			'source'        => $sourceDirectory,
 			'support'       => $supportDirectory,
 			'contracts'     => $contractsDirectory,
 			'helpers'       => $helpersFile,
 			'collection'    => $collectionPath
-		]);
+		];
 	}
 
 	public function normalizePath($path)
