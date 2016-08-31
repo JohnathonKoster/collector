@@ -1,6 +1,5 @@
 <?php
 
-use Mockery as m;
 use Collector\Utils\File;
 use Collector\Support\Config;
 use Collector\Utils\FilesystemVirtualization\Assertions;
