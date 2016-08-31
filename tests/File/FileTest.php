@@ -62,4 +62,9 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertFileExists($dirs['source']);
 	}
 
+	public function testFileNormalization()
+	{
+		$this->assertEquals('/user/home', $this->file->normalizePath('\\user\\home'));
+	}
+
 }

@@ -99,6 +99,13 @@ class File
 		];
 	}
 
+	/**
+	 * Normalizes the path name.
+	 *
+	 * @param  string $path
+	 *
+	 * @return string
+	 */
 	public function normalizePath($path)
 	{
 		return str_replace('\\', '/', $path);
