@@ -171,54 +171,6 @@ class File
 	}
 
 	/**
-	 * Just trims the namespace from a string.
-	 * 
-	 * @param  string $namespace
-	 * @param  string $dependency
-	 * @return string
-	 */
-	public function getSourcePath($namespace, $dependency) {
-		return mb_substr($dependency, mb_strlen($namespace));
-	}
-
-	/**
-	 * Generates a mapping of source files to destination files.
-	 * 
-	 * @param  array  $dependencies
-	 * @param  string $sourceDirectory
-	 * @param  string $destinationDirectory
-	 * @return array
-	 */
-	public function getCopyMap($dependencies, $sourceDirectory, $destinationDirectory) {
-
-		$copyMap = [
-			'contracts' => [],
-			'support'   => []
-		];
-
-		$collectionPath = $sourceDirectory.'/src/Illuminate/Support';
-		$contractPath   = $sourceDirectory.'/src/Illuminate/Contracts';
-		$destinationDirectory = $destinationDirectory.'/src/';
-
-		// Process the contracts.
-		foreach ($dependencies['contracts'] as $contract) {
-			$copyMap['contracts'][] = [
-				$contractPath.$this->getSourcePath('Illuminate/Contracts', $contract),
-				$destinationDirectory.$contract
-			];
-		}
-
-		foreach ($dependencies['support'] as $class) {
-			$copyMap['support'][] = [
-				$collectionPath.$this->getSourcePath('Illuminate/Support', $class),
-				$destinationDirectory.$class
-			];
-		}
-
-		return $copyMap;
-	}
-
-	/**
 	 * Recursively makes a directory.
 	 * 
 	 * @param  string $path
