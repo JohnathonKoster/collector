@@ -127,4 +127,14 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('overriden_second', $stuff['overriden_second']);
 	}
 
+	public function testThatFileCanCopyAFile()
+	{
+		$from = $this->getPath('from.php');
+		$to   = $this->getPath('to/some/nested/destination.php');
+		file_put_contents($from, $this->getFile('ClassReplacement'));
+
+		$this->file->copyFile($from, $to);
+		$this->assertFileExists($to);
+	}
+
 }

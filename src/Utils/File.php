@@ -208,7 +208,7 @@ class File
 	/**
 	 * Copies a file from one location to another.
 	 *
-	 * Will create the destination directory.
+	 * Will create the destination directory and perform class replacements.
 	 * 
 	 * @param  string $from
 	 * @param  string $to
@@ -219,6 +219,7 @@ class File
 		$to   = $this->normalizePath($to);
 
 		$this->makeDir(dirname($to));
+
 		$this->reportInfo("Copying '{$from}' to '{$to}'");
 
 		$copyResult = copy($from, $to);
