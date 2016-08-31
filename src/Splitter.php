@@ -62,6 +62,7 @@ class Splitter
 		$this->helperCollector     = new HelperCollector;
 		$this->dependencyCollector = new DependencyCollector;
 		$this->history             = new VersionHistoryManager;
+		$this->history->load(__DIR__.'/../storage/cache/tags/split.json');
 	}
 
 	/**
