@@ -27,6 +27,7 @@ class Collect extends Command
 		$this->splitter   = new Splitter;
 		$this->tagManager = new TagManager;
 		$this->history    = new VersionHistoryManager;
+		$this->history->load(__DIR__.'/../../storage/cache/tags/split.json');
 	}
 
 	protected function configure()

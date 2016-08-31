@@ -20,6 +20,7 @@ class TestOutput extends Command
 		parent::__construct();
 		$this->runner  = new Runner;
 		$this->history = new VersionHistoryManager;
+		$this->history->load(__DIR__.'/../../storage/cache/tags/split.json');
 	}
 
 	protected function configure()

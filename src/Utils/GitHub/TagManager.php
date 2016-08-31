@@ -18,11 +18,11 @@ class TagManager
 	{
 		$this->client = new CachedHttpClient;
 		$this->client->setCache(
-			new FilesystemCache(__DIR__.'/../../storage/cache/github')
+			new FilesystemCache(__DIR__.'/../../../storage/cache/github')
 		);
 		$this->github = new Client($this->client);
 
-		$this->cacheTagFile = __DIR__.'/../../storage/cache/tags/remote.json';
+		$this->cacheTagFile = __DIR__.'/../../../storage/cache/tags/remote.json';
 	}
 
 	public function getTags()
