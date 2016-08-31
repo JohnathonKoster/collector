@@ -246,7 +246,7 @@ class File
 	 * @param  string $sourceDirectory
 	 * @param  string $destinationDirectory
 	 */
-	public function copyFiles($sourceFiles, $sourceDirectory, $destinationDirectory) {
+	public function copyFiles(array $sourceFiles, $sourceDirectory, $destinationDirectory) {
 		foreach ($sourceFiles as $file) {
 			$this->copyFile(
 				$sourceDirectory.'/'.$file,
