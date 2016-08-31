@@ -57,6 +57,18 @@ class VersionHistoryManager
 	}
 
 	/**
+	 * Adds a version to the split history.
+	 * 
+	 * @param  string $splitVersion
+	 *
+	 * @return array
+	 */
+	public function add($splitVersion)
+	{
+		return $this->addSplitToHistory($splitVersion);
+	}
+
+	/**
 	 * Gets the split version history.
 	 * 
 	 * @return array
@@ -83,6 +95,18 @@ class VersionHistoryManager
 	public function existsInHistory($version)
 	{
 		return in_array($version, $this->cachedHistory);
+	}
+
+	/**
+	 * Determines if a version exists in history.
+	 * 
+	 * @param  string $version
+	 * 
+	 * @return bool
+	 */
+	public function has($version)
+	{
+		return $this->existsInHistory($version);
 	}
 
 }
