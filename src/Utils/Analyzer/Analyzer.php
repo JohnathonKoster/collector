@@ -285,10 +285,11 @@ class Analyzer
      * Get the dependencies for the current source.
      *
      * @param  boolean $returnNodes
+     * @param  boolean $onlyNamespaced
      *
      * @return UseDependencyVisitor|array
      */
-    public function getDependencies($returnNodes = false)
+    public function getDependencies($returnNodes = false, $onlyNamespaced = true)
     {
         // Resolve the names for the current scope. This
         // is important, especially when dealing with
@@ -342,8 +343,8 @@ class Analyzer
                 // belongs to the core PHP framework offerings.
                 if (count($use->uses[0]->name->parts) == 1 && !in_array($name, self::$previouslyAnalyzed)) {
                     self::$previouslyAnalyzed[] = $name;
-                    continue;
                 }
+
             } elseif ($use instanceof TraitUse) {
                 $name = $use->traits[0]->toString();
             }
@@ -351,6 +352,7 @@ class Analyzer
             $uses[] = $name;
         }
 
+        // Quick little performance improvement.
         $uses = array_unique($uses);
 
         // If there is a source directory set, we will recursively analyze the
@@ -360,21 +362,28 @@ class Analyzer
         if ($this->sourceDirectory !== null) {
             foreach ($uses as $use) {
                 if (!in_array($use, self::$previouslyAnalyzed)) {
-                    $usePath = $this->file->normalizePath($this->sourceDirectory."/src/{$use}.php");
+
+                    $usePath = $this->file->normalizePath($this->sourceDirectory."/{$use}.php");
+                    
                     if (file_exists($usePath)) {
 
                         $analyzer = new self;
                         $analyzer->setSourceDirectory($this->sourceDirectory);
                         $nestedDependencies = $analyzer->analyze(file_get_contents($usePath))->getDependencies();
 
-                        // Again, just another way to make sure we are only returning
-                        // namespaced class names to not include PHP classes, etc.
-                        $uses = array_merge($uses, array_filter($nestedDependencies, function ($dependency) {
-                            return count(explode('\\', $dependency) > 1);
-                        }));
+                        // Merge the dependencies.
+                        $uses = array_merge($uses, $nestedDependencies);
                     }
                 }
             }
+        }
+
+        $uses = array_unique($uses);
+
+        if ($onlyNamespaced) {
+            $uses = array_filter($uses, function($dependency) {
+                return (count(explode('\\', $dependency)) > 1);
+            });
         }
 
         return $uses;
