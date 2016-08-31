@@ -252,24 +252,4 @@ class File
 		}
 	}
 
-	/**
-	 * Creates a new file structure based on the copy map.
-	 * 
-	 * @param  array $map
-	 * @return void
-	 */
-	public function copyMap($map) {
-
-		// Copy the contracts over.
-		foreach ($map['contracts'] as $mapping) {
-			$this->copyFile($mapping[0], $mapping[1]);
-		}
-
-		// Copy over the rest!
-		foreach ($map['support'] as $mapping) {
-			$this->copyFile($mapping[0], $mapping[1]);
-		}
-
-	}
-
 }
