@@ -18,7 +18,6 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 		Analyzer::$previouslyAnalyzed = [];
 	}
 
-
 	protected function getCodePath()
 	{
 		return realpath(__DIR__.'/../files/code').'/';
