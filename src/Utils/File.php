@@ -10,6 +10,8 @@ class File
 {
 	use Notifier;
 
+	const REGEX_REPLACE_MULTIPLE_FORWARD_SLASH = '/([^:])(\/{2,})/';
+
 	/**
 	 * The root directory of the collector tool.
 	 *
@@ -108,7 +110,14 @@ class File
 	 */
 	public function normalizePath($path)
 	{
-		return str_replace('\\', '/', $path);
+		$path  = str_replace('\\', '/', $path);
+		$parts = preg_split('^://^', $path, 2);
+
+		if (count($parts) > 1) {
+			return $parts[0].'://'.preg_replace(self::REGEX_REPLACE_MULTIPLE_FORWARD_SLASH, '$1/', $parts[1]);
+		}
+
+		return preg_replace(self::REGEX_REPLACE_MULTIPLE_FORWARD_SLASH, '$1/', $path);
 	}
 
 	/**
@@ -212,6 +221,7 @@ class File
 	 * 
 	 * @param  string $from
 	 * @param  string $to
+	 * 
 	 * @return bool
 	 */
 	public function copyFile($from, $to) {
@@ -229,10 +239,18 @@ class File
 		return $copyResult;
 	}
 
+	/**
+	 * Copies a stub to the desired path.
+	 * 
+	 * @param  string $stub
+	 * @param  string $to
+	 */
 	public function copyStub($stub, $to) {
-		$stubPath = realpath(__DIR__.'/../storage/stubs/'.$stub);
-		$stubPath = $this->normalizePath($stubPath);
+		$stubPath    = $this->collectorRoot.'/storage/stubs/'.$stub;
+		$stubPath    = $this->normalizePath($stubPath);
+		$destination = $this->normalizePath($to.'/'.$stub);
 
+		// Only copy the stub if it actually exists.
 		if (file_exists($stubPath)) {
 			$this->copyFile($stubPath, $to.'/'.$stub);
 		}

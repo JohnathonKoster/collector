@@ -12,7 +12,7 @@ class FileTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * A File instnace.
+	 * A File instance.
 	 * 
 	 * @var File
 	 */
@@ -90,6 +90,7 @@ class FileTest extends PHPUnit_Framework_TestCase
 	public function testFileNormalization()
 	{
 		$this->assertEquals('/user/home', $this->file->normalizePath('\\user\\home'));
+		$this->assertEquals('vst://user/home/', $this->file->normalizePath('vst:\\\\user\\\\\\home\\\\'));
 	}
 
 	public function testThatMakeDirMakesDir()
@@ -135,6 +136,25 @@ class FileTest extends PHPUnit_Framework_TestCase
 
 		$this->file->copyFile($from, $to);
 		$this->assertFileExists($to);
+	}
+
+	public function testThatStubsCanBeCopied()
+	{
+		// Define some paths.
+		$localCodePath          = $this->getCodePath().'/DefinedFunctions.php';
+		$virtualStubPath        = $this->getPath('storage/stubs/DefinedFunctions.php');
+		$virtualDestination     = $this->getPath('virtual/destination/');
+		$virutalDestinationStub = $this->getPath('virtual/destination/DefinedFunctions.php');
+
+		// Copy the stub path to the virtual file system.
+		$this->file->copyFile($localCodePath, $virtualStubPath);
+		$this->file->copyStub('DefinedFunctions.php', $virtualDestination);
+
+		$this->assertFileExists($virutalDestinationStub);
+		$this->assertSame(
+			normalize_line_endings(file_get_contents($virtualStubPath)),
+			normalize_line_endings(file_get_contents($virutalDestinationStub))
+		);
 	}
 
 }
