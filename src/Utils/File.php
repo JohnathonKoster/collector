@@ -54,7 +54,7 @@ class File
 		$path = $this->collectorRoot.config('split.source').'/'.$version;
 
 		$this->makeDir($path);
-		return realpath($path);
+		return $path;
 	}
 
 	public function getDirectories($remote, $destination)
