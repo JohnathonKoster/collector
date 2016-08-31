@@ -77,4 +77,12 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('/user/home', $this->file->normalizePath('\\user\\home'));
 	}
 
+	public function testThatMakeDirMakesDir()
+	{
+		$dirPath = $this->getPath('nested/directory/structure');
+		$this->file->makeDir($dirPath);
+		$this->assertTrue(file_exists($dirPath));
+		$this->assertTrue(is_dir($dirPath));
+	}
+
 }
