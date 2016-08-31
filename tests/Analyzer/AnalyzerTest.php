@@ -112,4 +112,16 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('Illuminate\Support\Traits', (string) $namespace);
 	}
 
+	public function testThatAnalyzerGetsClassName()
+	{
+		$className = $this->analyzer->analyze($this->getFile('ClassName'))->getClass();
+		$this->assertEquals('Illuminate\Support\Collection', $className);
+	}
+
+	public function testThatAnalyzerCanGetClassNameWithoutNamespace()
+	{
+		$className = $this->analyzer->analyze($this->getFile('ClassName'))->getClass(false);
+		$this->assertEquals('Collection', $className);
+	}
+
 }
