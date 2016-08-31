@@ -240,6 +240,22 @@ class File
 	}
 
 	/**
+	 * Copies the source files from the source directory to the destination directory.
+	 *
+	 * @param  array  $sourceFiles
+	 * @param  string $sourceDirectory
+	 * @param  string $destinationDirectory
+	 */
+	public function copyFiles($sourceFiles, $sourceDirectory, $destinationDirectory) {
+		foreach ($sourceFiles as $file) {
+			$this->copyFile(
+				$sourceDirectory.'/'.$file,
+				$destinationDirectory.'/'.$file
+			);
+		}
+	}
+
+	/**
 	 * Copies a stub to the desired path.
 	 * 
 	 * @param  string $stub
@@ -259,15 +275,6 @@ class File
 	public function copyStubs(array $stubs, $to) {
 		foreach ($stubs as $stub) {
 			$this->copyStub($stub, $to);
-		}
-	}
-
-	public function copyFiles($sourceFiles, $sourceDirectory, $destinationDirectory) {
-		foreach ($sourceFiles as $file) {
-			$this->copyFile(
-				$sourceDirectory.'/'.$file,
-				$destinationDirectory.'/'.$file
-			);
 		}
 	}
 
