@@ -2,6 +2,8 @@
 
 namespace Collector\Utils;
 
+use Exception;
+
 class VersionHistoryManager
 {
 
@@ -10,7 +12,7 @@ class VersionHistoryManager
 	 * 
 	 * @var string
 	 */
-	protected $splitHistoryFile;
+	protected $splitHistoryFile = null;
 
 	/**
 	 * The cached history items.
@@ -40,6 +42,10 @@ class VersionHistoryManager
 	 */
 	protected function ensureHistoryExists()
 	{
+		if ($this->splitHistoryFile === null) {
+			throw new Exception('Cannot interact with version history without first loading history file.');
+		}
+
 		if (! file_exists($this->splitHistoryFile)) {
 			file_put_contents($this->splitHistoryFile, json_encode([]));
 		}
@@ -54,6 +60,8 @@ class VersionHistoryManager
 	 */
 	public function addSplitToHistory($splitVersion)
 	{
+		$this->ensureHistoryExists();
+
 		if (! is_array($splitVersion)) {
 			$splitVersion = (array) $splitVersion;
 		}
@@ -86,6 +94,7 @@ class VersionHistoryManager
 	public function getSplitHistory()
 	{
 		$this->ensureHistoryExists();
+
 		$history = json_decode(file_get_contents($this->splitHistoryFile));
 
 		if ($history === null) {
@@ -104,6 +113,8 @@ class VersionHistoryManager
 	 */
 	public function existsInHistory($version)
 	{
+		$this->ensureHistoryExists();
+		
 		return in_array($version, $this->cachedHistory);
 	}
 
