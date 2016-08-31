@@ -39,4 +39,10 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertFileExists($dir);
 	}
 
+	public function testThatFileReturnsCorrectOutputDirectory()
+	{
+		$dir = $this->file->getOutputDirectory('5.3.22');
+		$this->assertFileExists($dir);
+	}
+
 }

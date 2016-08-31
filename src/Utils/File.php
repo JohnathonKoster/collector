@@ -52,8 +52,23 @@ class File
 	public function getTempDirectory($version)
 	{
 		$path = $this->collectorRoot.config('split.source').'/'.$version;
-
 		$this->makeDir($path);
+		
+		return $path;
+	}
+
+	/**
+	 * Gets the output directory.
+	 *
+	 * @param  string $version
+	 *
+	 * @return string
+	 */
+	public function getOutputDirectory($version)
+	{
+		$path = $this->collectorRoot.config('split.output').'/'.$version;
+		$this->makeDir($path);
+
 		return $path;
 	}
 
@@ -81,13 +96,6 @@ class File
 	public function normalizePath($path)
 	{
 		return str_replace('\\', '/', $path);
-	}
-
-	public function getOutputDirectory($branch)
-	{
-		$path = __DIR__.'/../../'.config('split.output').'/'.$branch;
-		$this->makeDir($path);
-		return realpath($path);
 	}
 
 	/**
