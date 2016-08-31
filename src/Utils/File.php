@@ -177,17 +177,32 @@ class File
 	 */
 	public function makeDir($path) {
 		$path = $this->normalizePath($path);
-		if (!file_exists($path)) {
+		if (! file_exists($path)) {
 			mkdir($path, 0777, true);
 		}
 	}
 
-	public function doClassReplacements($path) {
-		$path = $this->normalizePath($path);
+	/**
+	 * Performs class replacements on a file.
+	 *
+	 * @param  string $path
+	 * @param  array  $replacements
+	 * 
+	 * @return string
+	 */
+	public function doClassReplacements($path, array $replacements = []) {
 
-		if (file_exists($path)) {
-			file_put_contents($path, strtr(file_get_contents($path), config('split.replace_class')));
+		$path     = $this->normalizePath($path);
+
+		if (count($replacements) == 0) {
+			$replacements = config('split.replace_class');
 		}
+
+		$contents = strtr(file_get_contents($path), $replacements);
+
+		file_put_contents($path, $contents);
+
+		return $contents;
 	}
 
 	/**
