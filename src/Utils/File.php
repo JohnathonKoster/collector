@@ -10,9 +10,48 @@ class File
 {
 	use Notifier;
 
-	public function getTempDirectory($branch)
+	/**
+	 * The root directory of the collector tool.
+	 *
+	 * @var string
+	 */
+	protected $collectorRoot = '';
+
+	public function __construct()
 	{
-		$path = __DIR__.'/../../'.config('split.source').'/'.$branch;
+		$this->collectorRoot = __DIR__.'/../../';
+	}
+
+	/**
+	 * Sets the collector root.
+	 *
+	 * @param string $rootDirectory
+	 */
+	public function setCollectorRoot($rootDirectory)
+	{
+		$this->collectorRoot = $rootDirectory;
+	}
+
+	/**
+	 * Gets the root directory.
+	 *
+	 * @return string
+	 */
+	public function getRootDirectory()
+	{
+		return $this->collectorRoot;
+	}
+
+	/**
+	 * Gets the path to the configured temporary directory.
+	 *
+	 * @param  string $version
+	 *
+	 * @return string
+	 */
+	public function getTempDirectory($version)
+	{
+		$path = __DIR__.'/../../'.config('split.source').'/'.$version;
 
 		$this->makeDir($path);
 		return realpath($path);
