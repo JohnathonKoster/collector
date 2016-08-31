@@ -18,9 +18,15 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 		Analyzer::$previouslyAnalyzed = [];
 	}
 
+
+	protected function getCodePath()
+	{
+		return realpath(__DIR__.'/../files/code').'/';
+	}
+
 	protected function getFile($sourceFile)
 	{
-		return normalize_line_endings(file_get_contents(__DIR__.'/../files/code/'.$sourceFile.'.php'));
+		return normalize_line_endings(file_get_contents($this->getCodePath().$sourceFile.'.php'));
 	}
 
 	protected function getExpected($sourceFile)
@@ -122,6 +128,57 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 	{
 		$className = $this->analyzer->analyze($this->getFile('ClassName'))->getClass(false);
 		$this->assertEquals('Collection', $className);
+	}
+
+	public function testThatAnalyzerCanResolveDependencies()
+	{
+		$this->analyzer->setSourceDirectory($this->getCodePath().'/src/');
+		$dependencies = $this->analyzer->analyze($this->getFile('src/Illuminate/Support/Collection'))->getDependencies();
+
+		$this->assertCount(5, $dependencies);
+		$this->assertContains('Illuminate\Support\Arr', $dependencies);
+		$this->assertContains('Illuminate\Support\Traits\Macroable', $dependencies);
+		$this->assertContains('Illuminate\Contracts\Support\Jsonable', $dependencies);
+		$this->assertContains('Illuminate\Contracts\Support\Arrayable', $dependencies);
+		$this->assertContains('Illuminate\Support\Collection', $dependencies);
+		
+	}
+
+	public function testThatAnalyzerCanReturnNonNamespacedItems()
+	{
+		$this->analyzer->setSourceDirectory($this->getCodePath().'/src/');
+		$dependencies = $this->analyzer->analyze($this->getFile('src/Illuminate/Support/Collection'))->getDependencies(false, false);
+
+		$this->assertCount(13, $dependencies);
+		$this->assertContains('Countable', $dependencies);
+		$this->assertContains('ArrayAccess', $dependencies);
+		$this->assertContains('Traversable', $dependencies);
+		$this->assertContains('ArrayIterator', $dependencies);
+		$this->assertContains('CachingIterator', $dependencies);
+		$this->assertContains('JsonSerializable', $dependencies);
+		$this->assertContains('IteratorAggregate', $dependencies);
+		$this->assertContains('InvalidArgumentException', $dependencies);
+		$this->assertContains('Illuminate\Support\Arr', $dependencies);
+		$this->assertContains('Illuminate\Support\Traits\Macroable', $dependencies);
+		$this->assertContains('Illuminate\Contracts\Support\Jsonable', $dependencies);
+		$this->assertContains('Illuminate\Contracts\Support\Arrayable', $dependencies);
+		$this->assertContains('Illuminate\Support\Collection', $dependencies);
+
+	}
+
+	public function testThatAnalyzerCanReturnResolveDeeplyNestedDependencies()
+	{
+		$this->analyzer->setSourceDirectory($this->getCodePath().'/nested_src/');
+		$dependencies = $this->analyzer->analyze($this->getFile('nested_src/Illuminate/Support/Collection'))->getDependencies();
+
+		$this->assertCount(7, $dependencies);
+		$this->assertContains('Illuminate\Support\Traits\Stop', $dependencies);
+		$this->assertContains('Illumiante\Support\Traits\The\Madness', $dependencies);
+		$this->assertContains('Illuminate\Support\Arr', $dependencies);
+		$this->assertContains('Illuminate\Support\Traits\Macroable', $dependencies);
+		$this->assertContains('Illuminate\Contracts\Support\Jsonable', $dependencies);
+		$this->assertContains('Illuminate\Contracts\Support\Arrayable', $dependencies);
+		$this->assertContains('Illuminate\Support\Collection', $dependencies);
 	}
 
 }
