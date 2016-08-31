@@ -171,6 +171,11 @@ class File
 	    return true;
 	}
 
+	/**
+	 * Recursively deletes a directory.
+	 *
+	 * @param string $directory
+	 */
 	public function resetDirectory($directory)
 	{
 		$this->deleteDirectory($directory, true);
