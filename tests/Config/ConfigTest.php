@@ -29,4 +29,10 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($config->get('example.another'), 'key');
 	}
 
+	public function testThatConfigHelperReturnsSameValues()
+	{
+		$config = Config::getInstance(self::CONFIG_DIR);
+		$this->assertEquals($config->get('test.test'), config('test.test'));
+	}
+
 }
