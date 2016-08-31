@@ -254,16 +254,17 @@ class Analyzer
     /**
      * Gets the class name for the current source.
      *
+     * @param  boolean $includeNamespace
+     * 
      * @return string
      */
-    public function getClass()
+    public function getClass($includeNamespace = true)
     {
         $traverser = new NodeTraverser;
         $visitor   = new ClassVisitor;
 
         $traverser->addVisitor($visitor);
         $traverser->traverse($this->statements);
-        $namespace = $this->getNamespace();
 
         $className = '';
 
@@ -271,8 +272,13 @@ class Analyzer
             $className = $visitor->getClass()->name;
         }
 
+        if ($includeNamespace) {
+            $namespace = $this->getNamespace();
 
-        return "{$namespace}\\{$className}";
+            return "{$namespace}\\{$className}";
+        }
+
+        return $className;
     }
 
     /**
