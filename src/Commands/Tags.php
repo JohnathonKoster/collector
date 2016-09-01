@@ -2,7 +2,7 @@
 
 namespace Collector\Commands;
 
-use Collector\Utils\GitHub\TagManager;
+use Collector\Utils\GitHub\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +15,7 @@ class Tags extends Command
 	public function __construct()
 	{
 		parent::__construct();
-		$this->tagManager = new TagManager;
+		$this->tagManager = Factory::makeGitHubTagManager();
 	}
 
 	protected function configure()

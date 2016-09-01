@@ -3,13 +3,13 @@
 namespace Collector\Commands;
 
 use Collector\Splitter;
-use Collector\Utils\GitHub\TagManager;
+use Collector\Utils\GitHub\Factory;
 use Collector\Utils\VersionHistoryManager;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Collect extends Command
@@ -25,7 +25,7 @@ class Collect extends Command
 	{
 		parent::__construct();
 		$this->splitter   = new Splitter;
-		$this->tagManager = new TagManager;
+		$this->tagManager = Factory::makeGitHubTagManager();
 		$this->history    = new VersionHistoryManager;
 		$this->history->load(__DIR__.'/../../storage/cache/tags/split.json');
 	}
