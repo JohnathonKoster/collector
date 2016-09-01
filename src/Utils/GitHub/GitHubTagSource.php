@@ -40,8 +40,14 @@ class GitHubTagSource extends AbstractTagSource
 	public function getTags()
 	{
 		$tags = $this->github->api('repo')->tags('laravel', 'framework');
+
+		$justName = [];
+
+		foreach ($tags as $tag) {
+			$justName[] = $tag['name'];
+		}
 		
-		return $tags;
+		return $justName;
 	}
 
 }
