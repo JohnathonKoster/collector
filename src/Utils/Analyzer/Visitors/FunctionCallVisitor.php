@@ -10,6 +10,11 @@ use PhpParser\NodeVisitorAbstract;
 class FunctionCallVisitor extends NodeVisitorAbstract
 {
 
+	/**
+	 * List of all function calls found.
+	 * 
+	 * @var array
+	 */
 	protected $functionCalls = [];
 
 	public function enterNode(Node $node)
@@ -21,6 +26,11 @@ class FunctionCallVisitor extends NodeVisitorAbstract
 		}
 	}
 
+	/**
+	 * Gets the function calls discovered by the visitor.
+	 * 
+	 * @return array
+	 */
 	public function getFunctionCalls()
 	{
 		return $this->functionCalls;

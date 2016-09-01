@@ -11,6 +11,13 @@ use PhpParser\NodeVisitorAbstract;
 class UseDependencyVisitor extends NodeVisitorAbstract
 {
 
+	/**
+	 * A list of use statements discovered by the visitor.
+	 *
+	 * Contains both namespaces and traits.
+	 * 
+	 * @var array
+	 */
 	protected $useStatements = [];
 
 	public function enterNode(Node $node)
@@ -20,6 +27,11 @@ class UseDependencyVisitor extends NodeVisitorAbstract
 		}
 	}
 
+	/**
+	 * Gets the namespaces and traits used in the current statement tree.
+	 * 
+	 * @return array
+	 */
 	public function getUseStatements()
 	{
 		return $this->useStatements;

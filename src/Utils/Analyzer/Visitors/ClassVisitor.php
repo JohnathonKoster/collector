@@ -11,6 +11,11 @@ use PhpParser\Node\Stmt\Interface_;
 class ClassVisitor extends NodeVisitorAbstract
 {
 
+	/**
+	 * Class_ instance.
+	 * 
+	 * @var PhpParser\Node\Stmt\Class_
+	 */
 	protected $class = null;
 
 	public function enterNode(Node $node)
@@ -20,7 +25,11 @@ class ClassVisitor extends NodeVisitorAbstract
 		}
 	}
 
-	
+	/**
+	 * Gets the last class discovered by the visitor.
+	 * 
+	 * @return PhpParser\Node\Stmt\Class_
+	 */
 	public function getClass()
 	{
 		return $this->class;

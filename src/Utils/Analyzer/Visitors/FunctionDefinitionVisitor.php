@@ -10,6 +10,11 @@ use PhpParser\NodeVisitorAbstract;
 class FunctionDefinitionVisitor extends NodeVisitorAbstract
 {
 
+	/**
+	 * List of function definitions discovered by the visitor.
+	 * 
+	 * @var array
+	 */
 	protected $functionDefinitions = [];
 
 	public function enterNode(Node $node)
@@ -19,6 +24,11 @@ class FunctionDefinitionVisitor extends NodeVisitorAbstract
 		}
 	}
 
+	/**
+	 * Gets the function definitions discovered by the visitor.
+	 * 
+	 * @return array
+	 */
 	public function getFunctionDefinitions()
 	{
 		return $this->functionDefinitions;

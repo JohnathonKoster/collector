@@ -10,6 +10,11 @@ use PhpParser\NodeVisitorAbstract;
 class StaticCallVisitor extends NodeVisitorAbstract
 {
 
+	/**
+	 * A list of all static calls discovered by the visitor.
+	 * 
+	 * @var array
+	 */
 	protected $staticCalls = [];
 
 	public function enterNode(Node $node)
@@ -19,6 +24,11 @@ class StaticCallVisitor extends NodeVisitorAbstract
 		}
 	}
 
+	/**
+	 * Gets the static calls discovered by the visitor.
+	 * 
+	 * @return array
+	 */
 	public function getStaticCalls()
 	{
 		return $this->staticCalls;
