@@ -12,7 +12,7 @@ class ClassVisitor extends NodeVisitorAbstract
 {
 
 	/**
-	 * Class_ instance.
+	 * The last visited Class_ instance.
 	 * 
 	 * @var PhpParser\Node\Stmt\Class_
 	 */
