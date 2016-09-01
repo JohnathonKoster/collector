@@ -42,14 +42,7 @@ class TagManager
 	{
 		$tags = $this->tagSource->getTags();
 
-
-		$justName = [];
-
-		foreach ($tags as $tag) {
-			$justName[] = $tag['name'];
-		}
-
-		file_put_contents($this->cacheTagFile, json_encode($justName));
+		file_put_contents($this->cacheTagFile, json_encode($tags));
 	}
 
 	/**
@@ -59,7 +52,7 @@ class TagManager
 	 */
 	public function getCacheTags()
 	{
-		if (!file_exists($this->cacheTagFile)) {
+		if (! file_exists($this->cacheTagFile)) {
 			$this->cacheTags();
 		}
 
