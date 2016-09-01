@@ -7,10 +7,12 @@ use Collector\Utils\GitHub\Factory;
 use Collector\Utils\VersionHistoryManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Output\OutputInterface;
+
 
 class Collect extends Command
 {
@@ -50,12 +52,12 @@ class Collect extends Command
 		$this->splitter->shouldSkipGitOperators(!$input->getOption('git'));
 		$this->splitter->onlySupportNewGitOperations($input->getOption('catchup'));
 		$this->splitter->forceSplit($input->getOption('force'));
-		
+
+		$versionsToSplit = [];
 
 		if (config('split.mode') == 'manual') {
 			$output->writeln("Starting splitter in manual mode...\n");
 			$versionsToSplit = config('split.versions');
-			$this->splitter->split($versionsToSplit);
 		} else {
 			$output->writeln("Starting splitter in automatic mode...\n");
 			$tagsAfterConfiguredStartTag = $this->tagManager->getTagsAfter(config('split.start_with'));
@@ -69,15 +71,19 @@ class Collect extends Command
 
 			// This will set the output directory name to the same the source directory name.
 			$versionsToSplit = array_combine(array_values($versionsToSplit), array_values($versionsToSplit));
+		}	
 
+		if (count($versionsToSplit) > 0) {
+			$output->writeln("There are ".count($versionsToSplit)." versions to split.\n");
+			$progressBar = new ProgressBar($output, count($versionsToSplit));
 
-			if (count($versionsToSplit) > 0) {
-				$output->writeln("There are ".count($versionsToSplit)." versions to automatically split.\n");
-				$this->splitter->split($versionsToSplit);
-			} else {
-				$output->writeln('No new versions to split. If you believe this is an error, try removing the remote tag cache and running this command again.');
+			foreach ($versionsToSplit as $source => $output) {
+				$this->splitter->split($source, $output);
+				$progressBar->advance();
 			}
-
+			$progressBar->finish();
+		} else {
+			$output->writeln('No new versions to split. If you believe this is an error, try removing the remote tag cache and running this command again.');
 		}
 
 	}
