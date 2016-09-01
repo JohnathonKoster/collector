@@ -11,16 +11,31 @@ abstract class AbstractCollector
 {
 	use Notifier;
 
+	/**
+	 * The File instance.
+	 * 
+	 * @var Collector\Utils\File
+	 */
 	protected $file;
 
+	/**
+	 * The Analyzer instance.
+	 * 
+	 * @var Collector\Utils\Analyzer\Analyzer
+	 */
 	protected $analyzer;
 
 	public function __construct()
 	{
-		$this->file = new File;
+		$this->file     = new File;
 		$this->analyzer = new Analyzer;
 	}
 
+	/**
+	 * Sets the notifiers the collector will use.
+	 * 
+	 * @param Closure $notifier
+	 */
 	public function setNotifiers(Closure $notifier)
 	{
 		$this->setNotifier($notifier);
