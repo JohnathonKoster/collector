@@ -5,7 +5,6 @@ namespace Collector\Utils;
 use SplFileInfo;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
-use RecusiveCallbackFilterIterator;
 
 class File
 {
@@ -143,17 +142,10 @@ class File
 	        return unlink($source);
 	    }
 
-	    $files = new RecursiveIteratorIterator(
-		  new RecursiveCallbackFilterIterator(
-		    new RecursiveDirectoryIterator(
-		      $directory,
-		      RecursiveDirectoryIterator::SKIP_DOTS
-		    ),
-		    function ($fileInfo, $key, $iterator) {
-		      return $fileInfo->isFile() || !in_array($fileInfo->getBaseName(), ['.git']);
-		    }
-		  )
-		);
+	    $files = new RecursiveIteratorIterator (
+	        new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
+	        RecursiveIteratorIterator::CHILD_FIRST
+	    );
 
 	    //$fileinfo as SplFileInfo
 	    foreach ($files as $fileinfo) {
