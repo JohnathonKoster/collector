@@ -8,8 +8,27 @@ use Collector\Utils\Dependency\Collector as DependencyCollector;
 class Collector extends AbstractCollector
 {
 
+	/**
+	 * A list of paths to common Collection utility files.
+	 * 
+	 * @var array
+	 */
 	protected $paths;
 
+	/**
+	 * A list of helper functions that should always be included (if they exist).
+	 * 
+	 * @var array
+	 */
+	protected $helpersToAlwaysInclude = [
+		'collect'
+	];
+
+	/**
+	 * The DependencyCollector instance.
+	 * 
+	 * @var Collector\Utils\Dependency\Collector
+	 */
 	protected $dependencyCollector;
 
 	public function __construct()
@@ -18,9 +37,6 @@ class Collector extends AbstractCollector
 		$this->dependencyCollector = new DependencyCollector;
 	}
 
-	protected $helpersToAlwaysInclude = [
-		'collect'
-	];
 
 	protected function getIlluminateHelperFunctions($returnNodes = false)
 	{
