@@ -26,7 +26,6 @@ class Application extends SymfonyApplication
     {
         return array_merge(parent::getDefaultCommands(), [
                 new Commands\Collect,
-                new Commands\CollectHelpers,
                 new Commands\Tags,
                 new Commands\TestOutput,
             ]);
