@@ -41,9 +41,11 @@ class Collect extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$this->splitter->setNotifiers(function($message, $type) use ($output) {
-			$output->writeln("<{$type}>{$message}</{$type}>");
-		});
+		if ($input->getOption('verbose')) {
+			$this->splitter->setNotifiers(function($message, $type) use ($output) {
+				$output->writeln("<{$type}>{$message}</{$type}>");
+			});
+		}
 
 		$this->splitter->shouldSkipGitOperators(!$input->getOption('git'));
 		$this->splitter->onlySupportNewGitOperations($input->getOption('catchup'));
@@ -60,13 +62,14 @@ class Collect extends Command
 			$history = $this->history->getSplitHistory();
 
 			if ($input->getOption('force')) {
-				$versionsToSplit = $history;
+				$versionsToSplit = $tagsAfterConfiguredStartTag;
 			} else {
 				$versionsToSplit = array_diff($tagsAfterConfiguredStartTag, $history);
 			}
 
 			// This will set the output directory name to the same the source directory name.
 			$versionsToSplit = array_combine(array_values($versionsToSplit), array_values($versionsToSplit));
+
 
 			if (count($versionsToSplit) > 0) {
 				$output->writeln("There are ".count($versionsToSplit)." versions to automatically split.\n");
