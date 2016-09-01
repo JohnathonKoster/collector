@@ -5,7 +5,6 @@ namespace Collector\Utils\Tests;
 use Closure;
 use Collector\Utils\File;
 use Collector\Utils\Notifier;
-use Symfony\Component\Process\Process;
 
 class Runner
 {
@@ -67,10 +66,8 @@ class Runner
 		$testCommand = sprintf(config('tests.run'), $output, $vendorTestPath, $bootstrapPath);
 
 		$this->info("Running tests using {$testCommand}");
-		$process = new Process($testCommand);
-		$process->setTimeout(0);
-		$code = $process->run();
-		// $code = $this->run($testCommand);
+		
+		$code = $this->run($testCommand);
 
 		if ($code == 2) {
 			$this->error("Tests failed for {$output}");
