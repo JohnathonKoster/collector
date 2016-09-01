@@ -11,6 +11,11 @@ class Runner
 {
 	use Notifier;
 
+	/**
+	 * The File instance.
+	 * 
+	 * @var Collector\Utils\File
+	 */
 	protected $file;
 
 	public function __construct()
@@ -29,6 +34,12 @@ class Runner
 		$this->file->setNotifier($notifier);
 	}
 
+	/**
+	 * Runs the PHPUnit test command on target output directory.
+	 * 
+	 * @param  string $output
+	 * @return int
+	 */
 	public function runTestsOn($output)
 	{
 		$this->info("Preparing to run tests on {$output}...");
