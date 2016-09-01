@@ -5,6 +5,7 @@ namespace Collector;
 use Closure;
 use Collector\Utils\File;
 use Collector\Utils\Notifier;
+use Collector\Utils\Tests\Runner;
 use Collector\Utils\Analyzer\Analyzer;
 use Collector\Utils\VersionHistoryManager;
 use Collector\Utils\Helpers\Collector as HelperCollector;
@@ -29,6 +30,8 @@ class Splitter
 	protected $paths;
 
 	protected $history;
+
+	protected $testRunner;
 
 	protected $forceSplit = false;
 
@@ -62,6 +65,7 @@ class Splitter
 		$this->helperCollector     = new HelperCollector;
 		$this->dependencyCollector = new DependencyCollector;
 		$this->history             = new VersionHistoryManager;
+		$this->testRunner          = new Runner;
 		$this->history->load(__DIR__.'/../storage/cache/tags/split.json');
 	}
 
@@ -203,6 +207,12 @@ class Splitter
 			);
 
 			$this->history->addSplitToHistory($destination);
+
+			if ($this->testRunner->runTestsOn($destination) == 0) {
+				$this->report("Tests passed for {$destination}");
+			}
+
+
 		} else {
 			$outputDir = $this->paths->output;
 			$this->line("Skipping generation of {$remote}. It has already been split. If this is not desired, please remove the output directory at {$outputDir}");
