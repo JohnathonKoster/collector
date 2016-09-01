@@ -37,19 +37,35 @@ class Collector extends AbstractCollector
 		$this->dependencyCollector = new DependencyCollector;
 	}
 
-
+	/**
+	 * Gets the support helper functions from the Laravel code base.
+	 * 
+	 * @param  boolean $returnNodes
+	 * @return array
+	 */
 	protected function getIlluminateHelperFunctions($returnNodes = false)
 	{
 		$functions = $this->analyzer->analyze(file_get_contents($this->paths->helpers))->getDefinedFunctions($returnNodes);
 		return $functions;
 	}
 
+	/**
+	 * Gets any dependencies required by the helper functions.
+	 * 
+	 * @return array
+	 */
 	protected function getHelperDependencies()
 	{
 		return $this->analyzer->analyze(file_get_contents($this->paths->helpers))->getUsingStatements();
 	}
 
-	protected function getUsedIlluminateHelpers($helpersToLookFor)
+	/**
+	 * Determines which helper functions were used within the Collection.php file.
+	 * 
+	 * @param  array $helpersToLookFor
+	 * @return array
+	 */
+	protected function getUsedIlluminateHelpers(array $helpersToLookFor)
 	{
 		$functionCalls = $this->analyzer->analyze(file_get_contents($this->paths->collection))->getFunctionCalls();
 
@@ -64,6 +80,13 @@ class Collector extends AbstractCollector
 		return array_unique($helpersCalled);
 	}
 
+	/**
+	 * Writes the new helpers.php file to the output directory.
+	 * 
+	 * @param  string $remote
+	 * @param  array  $helpers
+	 * 
+	 */
 	protected function writeNewHelperFile($remote, $helpers)
 	{
 		$helperSource  = explode("\n", file_get_contents($this->paths->helpers));
@@ -102,38 +125,58 @@ class Collector extends AbstractCollector
 		
 	}
 
+	/**
+	 * Collects the helper functions used and generates a new helpers.php file.
+	 * 
+	 * @param  string $remote
+	 * @param  string $local
+	 * 
+	 * @return int
+	 */
 	public function collect($remote, $local)
 	{
 		$this->paths = $this->file->getDirectories($remote, $local);
-		$this->info("Collecting helper functions from {$remote}...");
 
+		$this->info("Collecting helper functions from {$remote}...");
 		$this->report("Discovering the Illuminate helper functions...");
+
 		$helperFunctions = $this->getIlluminateHelperFunctions();
 		$countHelperFunctions  = count($helperFunctions);
-		$this->report("Discovered {$countHelperFunctions} Illuminate helper functions! So many!");
 
+		$this->report("Discovered {$countHelperFunctions} Illuminate helper functions! So many!");
 		$this->info("Searching the '{$remote}' code-base for used helper functions...");
+
 		$helpersCalled = $this->getUsedIlluminateHelpers($helperFunctions);
 		$countHelpersCalled = count($helpersCalled);
+
 		$this->report("Discovered {$countHelpersCalled} being used in the Collection source file.");
 		
+		// Bail at this point if now helpers were discovered.
 		if ($countHelpersCalled == 0) {
 			$this->warn("Helpers are not being written for {$remote}. No helpers used!");
 			return 0;
 		}
 
+		// Display the helpers that were discovered.
 		foreach ($helpersCalled as $helper) {
 			$this->report("\t{$helper}");
 		}
+
 		$this->info("Merging required helpers and sorting discovered helper functions...");
+
 		sort($helpersCalled);
 		$helpersCalled = array_merge($this->helpersToAlwaysInclude, $helpersCalled);
+
 		$this->report("The resulting helper list is:");
+
+		// Display the final list of helpers.
 		foreach ($helpersCalled as $helper) {
 			$this->report("\t{$helper}");
 		}
 
 		$this->info("Creating modified helper file...");
+
+		// Actually write the new helpers file.
 		$this->writeNewHelperFile($remote, $helpersCalled);
 
 		return $countHelpersCalled;
