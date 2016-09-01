@@ -16,6 +16,13 @@ trait Notifier
 	protected $notifier = null;
 
 	/**
+	 * Indicates if the notifier should output or not.
+	 * 
+	 * @var boolean
+	 */
+	protected $isQuiet = false;
+
+	/**
 	 * Sets the notifier callback.
 	 *
 	 * @param Closure $notifier
@@ -26,6 +33,16 @@ trait Notifier
 	}
 
 	/**
+	 * Sets whether or not the notifier is quiet.
+	 * 
+	 * @param boolean $isQuiet
+	 */
+	public function isQuet($isQuiet)
+	{
+		$this->isQuiet = $isQuiet;
+	}
+
+	/**
 	 * Prints a message using the notifier callback.
 	 *
 	 * @param  string $message
@@ -33,7 +50,7 @@ trait Notifier
 	 */
 	protected function notify($message, $type = 'info')
 	{
-		if ($this->notifier !== null) {
+		if ($this->notifier !== null && !$this->isQuiet) {
 			$this->notifier->__invoke($message, $type);
 		}
 	}
