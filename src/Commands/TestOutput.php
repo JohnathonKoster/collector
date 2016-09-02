@@ -31,9 +31,11 @@ class TestOutput extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$this->runner->setNotifiers(function($message, $type) use ($output) {
-			$output->writeln("<{$type}>{$message}</{$type}>");
-		});
+		if ($input->getOption('verbose')) {
+			$this->runner->setNotifiers(function($message, $type) use ($output) {
+				$output->writeln("<{$type}>{$message}</{$type}>");
+			});
+		}
 
 		foreach ($this->history->getSplitHistory() as $splitVersion) {
 			$this->runner->runTestsOn($splitVersion);
