@@ -164,7 +164,10 @@ class Splitter
 				$this->file->resetDirectory($this->paths->source);
 
 				// Create the git command.
-				$gitOperation = sprintf(config('git.clone'), $remote, $this->paths->source);
+				$gitOperation = strtr(config('git.clone'), [
+					'@version@' => $remote,
+					'@source@'  => $this->paths->source
+				]);
 
 				$this->info("Cloning using '{$gitOperation}'");
 				$this->run($gitOperation);
@@ -192,6 +195,8 @@ class Splitter
 			// we do not have call this method in a separate process for each
 			// of the different Illuminate branches that we are splitting.
 			$helpersWritten = $this->helperCollector->collect($remote, $destination);
+
+
 
 			// This will update the composer.json file to remove the helpers.php entry.
 			if ($helpersWritten == 0) {
