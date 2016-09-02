@@ -63,7 +63,11 @@ class Runner
 		file_put_contents($composerJsonPath, $newJson);
 		
 
-		$testCommand = sprintf(config('tests.run'), $output, $vendorTestPath, $bootstrapPath);
+		$testCommand = strtr(config('tests.run'), [
+			'@bootstrap@' => $bootstrapPath,
+			'@outputDir@' => $output,
+			'@vendor@'    => $vendorTestPath
+		]);
 
 		$this->info("Running tests using {$testCommand}");
 		
