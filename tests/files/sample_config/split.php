@@ -46,7 +46,6 @@ return [
         'v5.2.45'      => '5.2.45',
         'v5.0.21'      => '5.0.21',
         'v4.1.31'      => '4.1.31',
-        'v4.0.0-BETA2' => '4.0.0-BETA2', // Why not?
     ],
 
     /*
@@ -73,6 +72,19 @@ return [
     |
     */
     'source' => 'tmp',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Publish Directory
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the directory that all the generated collection
+    | components will be copied to after a successful split. Also, this
+    | directory should be the final git repository that git commands
+    | will be executed when publishing the newly split version(s).
+    |
+    */
+    'publish' => 'publish',
 
     /*
     |--------------------------------------------------------------------------
