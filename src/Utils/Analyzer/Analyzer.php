@@ -363,8 +363,8 @@ class Analyzer
             foreach ($uses as $use) {
                 if (!in_array($use, self::$previouslyAnalyzed)) {
 
-                    $usePath = $this->file->normalizePath($this->sourceDirectory."/{$use}.php");
-                    
+                    $usePath = $this->file->normalizePath($this->sourceDirectory."/src/{$use}.php");
+
                     if (file_exists($usePath)) {
 
                         $analyzer = new self;
@@ -373,8 +373,7 @@ class Analyzer
 
                         // Merge the dependencies.
                         $uses = array_merge($uses, $nestedDependencies);
-                    }
-                }
+                    }                }
             }
         }
 
