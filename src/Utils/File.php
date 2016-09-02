@@ -54,7 +54,7 @@ class File
 	 */
 	public function getTempDirectory($version)
 	{
-		$path = $this->collectorRoot.config('split.source').'/'.$version;
+		$path = config('split.source').'/'.$version;
 		$this->makeDir($path);
 
 		return $path;
@@ -69,7 +69,7 @@ class File
 	 */
 	public function getOutputDirectory($version)
 	{
-		$path = $this->collectorRoot.config('split.output').'/'.$version;
+		$path = config('split.output').'/'.$version;
 		$this->makeDir($path);
 
 		return $path;
