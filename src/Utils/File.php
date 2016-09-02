@@ -78,10 +78,10 @@ class File
 	/**
 	 * Gets the standard directories used by most split versions.
 	 *
-	 * @param      <type>  $remote       The remote
-	 * @param      <type>  $destination  The destination
+	 * @param  string $remote
+	 * @param  string $destination
 	 *
-	 * @return     <type>  The directories.
+	 * @return \stdClass
 	 */
 	public function getDirectories($remote, $destination)
 	{
