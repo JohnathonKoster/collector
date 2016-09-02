@@ -14,6 +14,6 @@ return [
     | used to specify the location to clone the branch to.
     |
     */
-    'clone' => 'git clone -b "%s" --single-branch --depth 1 https://github.com/laravel/framework.git %s',
+    'clone' => env('GIT_CLONE'),
 
 ];

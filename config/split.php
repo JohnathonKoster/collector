@@ -15,7 +15,7 @@ return [
     | the "versions" option below; specifying the output dir.
     |
     */
-    'mode' => 'auto',
+    'mode' => 'manual',
 
     /*
     |--------------------------------------------------------------------------
@@ -41,12 +41,6 @@ return [
     |
     */
     'versions' => [
-        'v5.3.4'       => '5.3.4',
-        'v5.3.3'       => '5.3.3',
-        'v5.2.45'      => '5.2.45',
-        'v5.0.21'      => '5.0.21',
-        'v4.1.31'      => '4.1.31',
-        'v4.0.0-BETA2' => '4.0.0-BETA2', // Why not?
     ],
 
     /*
@@ -61,7 +55,7 @@ return [
     | users make sure to run with elevated user permissions.
     |
     */
-    'output' => 'output',
+    'output' => env('SPLIT_DIR_OUTPUT'),
 
     /*
     |--------------------------------------------------------------------------
@@ -72,7 +66,20 @@ return [
     | Laravel framework source for each version it is attempting to split.
     |
     */
-    'source' => 'tmp',
+    'source' => env('SPLIT_DIR_SOURCE'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Publish Directory
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the directory that all the generated collection
+    | components will be copied to after a successful split. Also, this
+    | directory should be the final git repository that git commands
+    | will be executed when publishing the newly split version(s).
+    |
+    */
+    'publish' => env('SPLIT_DIR_PUBLISH'),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,7 +93,8 @@ return [
     |
     */
     'classes' => [
-        'Collection.php'
+        'Collection.php',
+        'Arr.php',
     ],
 
 
