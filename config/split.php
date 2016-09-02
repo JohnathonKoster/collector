@@ -94,7 +94,6 @@ return [
     */
     'classes' => [
         'Collection.php',
-        'Arr.php',
     ],
 
 
