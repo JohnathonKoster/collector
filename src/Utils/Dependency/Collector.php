@@ -13,13 +13,18 @@ class Collector extends AbstractCollector
 	{
 		$path = $this->paths->support."/{$className}";
 		$this->analyzer->setSourceDirectory($this->paths->source);
-		$dependencies = $this->analyzer->analyze(file_get_contents($path))->getDependencies();
 
-		$dependencies = array_unique(array_filter($dependencies, function($dependency) {
-			return mb_strpos($dependency, 'Illuminate') === 0;
-		}));
+		if (file_exists($path)) {
+			$dependencies = $this->analyzer->analyze(file_get_contents($path))->getDependencies();
 
-		return $dependencies;
+			$dependencies = array_unique(array_filter($dependencies, function($dependency) {
+				return mb_strpos($dependency, 'Illuminate') === 0;
+			}));
+
+			return $dependencies;
+		}
+
+		return [];
 	}
 
 	public function collect($remote, $local)
