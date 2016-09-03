@@ -363,7 +363,16 @@ class Analyzer
             foreach ($uses as $use) {
                 if (!in_array($use, self::$previouslyAnalyzed)) {
 
-                    $usePath = $this->file->normalizePath($this->sourceDirectory."/src/{$use}.php");
+                    $sourcePath = $this->file->normalizePath($this->sourceDirectory."/src/{$use}.php");
+                    $directPath = $this->file->normalizePath($this->sourceDirectory."/{$use}.php");
+
+                    $usePath = '';
+
+                    if (file_exists($sourcePath)) {
+                        $usePath = $sourcePath;
+                    } elseif (file_exists($directPath)) {
+                        $usePath = $directPath;
+                    }
 
                     if (file_exists($usePath)) {
 
