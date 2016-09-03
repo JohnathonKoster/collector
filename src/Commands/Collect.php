@@ -76,9 +76,22 @@ class Collect extends Command
 		if (count($versionsToSplit) > 0) {
 			$output->writeln("There are ".count($versionsToSplit)." versions to split.\n");
 			$progressBar = new ProgressBar($output, count($versionsToSplit));
+			$progressBar->setFormat("%message%\n%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%");
+			$progressBar->setMessage("Preparing to split...");
+			$progressBar->setRedrawFrequency(1);
+
+
+			if (!$input->getOption('verbose')) {
+				$this->splitter->setNotifiers(function($message, $type) use ($progressBar) {
+					$progressBar->setMessage("<{$type}>{$message}</{$type}>");
+				});
+			}
 
 			foreach ($versionsToSplit as $source => $output) {
+				$progressBar->setMessage("Splitting version ".$output);
+
 				$this->splitter->split($source, $output);
+
 				$progressBar->advance();
 			}
 			$progressBar->finish();
