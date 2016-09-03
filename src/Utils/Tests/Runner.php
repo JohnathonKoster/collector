@@ -42,10 +42,10 @@ class Runner
 	public function runTestsOn($output)
 	{
 		$this->info("Preparing to run tests on {$output}...");
-		$output = $this->file->getDirectories('', $output)->output;
+		$outputDirectory = $this->file->getDirectories('', $output)->output;
 
 		$this->info("Creating a backup of the existing composer.json file...");
-		$composerJsonPath = $this->file->normalizePath($output.'/composer.json');
+		$composerJsonPath = $this->file->normalizePath($outputDirectory.'/composer.json');
 		$vendorTestPath   = $this->file->normalizePath(__DIR__.'/../../../vendor_test');
 		$bootstrapPath    = $this->file->normalizePath(__DIR__.'/../../../storage/tests/bootstrap.php');
 		$composerJson = file_get_contents($composerJsonPath);
@@ -65,8 +65,9 @@ class Runner
 
 		$testCommand = strtr(config('tests.run'), [
 			'@bootstrap@' => $bootstrapPath,
-			'@outputDir@' => $output,
-			'@vendor@'    => $vendorTestPath
+			'@outputDir@' => $outputDirectory,
+			'@vendor@'    => $vendorTestPath,
+			'@version@'   => $output
 		]);
 
 		$this->info("Running tests using {$testCommand}");
@@ -74,11 +75,11 @@ class Runner
 		$code = $this->run($testCommand);
 
 		if ($code == 2) {
-			$this->error("Tests failed for {$output}");
+			$this->error("Tests failed for {$outputDirectory}");
 		} elseif ($code == 1) {
 			$this->error("There appears to be problems with the test Runner paths. Check the storage paths.");
 		} elseif ($code == 0) {
-			$this->info("Tests passed for {$output}");
+			$this->info("Tests passed for {$outputDirectory}");
 		}
 
 		$this->info("Restoring composer.json file...");
