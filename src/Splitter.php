@@ -3,6 +3,7 @@
 namespace Collector;
 
 use Closure;
+use ErrorException;
 use Collector\Utils\File;
 use Collector\Utils\Notifier;
 use Collector\Utils\Tests\Runner;
@@ -34,6 +35,10 @@ class Splitter
 	protected $testRunner;
 
 	protected $forceSplit = false;
+
+	protected $maxRetries = 2;
+
+	protected $currentTry = 1;
 
 	/**
 	 * The required files for all splits.
@@ -143,8 +148,9 @@ class Splitter
 	/**
 	 * Performs the git clone operation.
 	 * 
+	 * @param string $remote
 	 */
-	protected function doGitOperation()
+	protected function doGitOperation($remote)
 	{
 		// For now, we will just completely remove the source directory
 		// and create it again. Later, we can probably optimize this
@@ -179,7 +185,7 @@ class Splitter
 		// Perform the git clone operations if we aren't skipping it.
 		if (!$this->skipGitOperations) {
 			if ($this->onlyNewGitBranches && !$alreadySplit && !$this->localRepositoryExists() || !$this->onlyNewGitBranches) {
-				$this->doGitOperation();
+				$this->doGitOperation($remote);
 			} else {
 				$this->line("Skipping git operations for {$remote}. Local copy already exists.");
 			}
@@ -189,11 +195,26 @@ class Splitter
 
 		if (!$alreadySplit) {
 
-			// Copy the files that will be common to all splits.
-			$this->report('Copying required files to output...');
-			$this->file->copyFiles($this->requiredFiles, $this->paths->source, $this->paths->output);
-			$this->report('Copying required stubs to output...');
-			$this->file->copyStubs($this->requiredStubs, $this->paths->output);
+			try {
+				// Copy the files that will be common to all splits.
+				$this->report('Copying required files to output...');
+				$this->file->copyFiles($this->requiredFiles, $this->paths->source, $this->paths->output);
+				$this->report('Copying required stubs to output...');
+				$this->file->copyStubs($this->requiredStubs, $this->paths->output);
+			} catch (ErrorException $e) {
+				// The most likely reason that we have entered into this catch
+				// block is that a split process was forcefully terminated;
+				// the git repository does not contain a required file.
+				if ($this->currentTry <= $this->maxRetries) {
+					$this->doGitOperation($remote);
+					$this->currentTry++;
+					$this->doSplit($remote, $destination);
+					return;
+				} else {
+					// Just give up after the max retries has been hit.
+					throw $e;
+				}
+			}
 
 			// This will analyze all of the classes that are specified in the
 			// split.classes configuration entry, get any dependencies and
@@ -226,11 +247,12 @@ class Splitter
 				$this->report("Tests passed for {$destination}");
 			}
 
-
 		} else {
 			$outputDir = $this->paths->output;
 			$this->line("Skipping generation of {$remote}. It has already been split. If this is not desired, please remove the output directory at {$outputDir}");
 		}
+
+		$this->currentTry = 1;
 	}
 
 	/**
