@@ -133,7 +133,7 @@ class File
 	 *
 	 * @return bool
 	 */
-	public function deleteDirectory($source, $removeOnlyChildren = false)
+	public function deleteDirectory($source, $removeOnlyChildren = false, $keepDirectories = [])
 	{
 	    if (empty($source) || file_exists($source) === false) {
 	        return false;
@@ -143,16 +143,10 @@ class File
 	        return unlink($source);
 	    }
 
-	    $files = new RecursiveIteratorIterator(
-		  new RecursiveCallbackFilterIterator(
-		    new RecursiveDirectoryIterator(
-		      $source,
-		      RecursiveDirectoryIterator::SKIP_DOTS
-		    ),
-		    function ($fileInfo, $key, $iterator) {
-		      return $fileInfo->isFile() || !in_array($fileInfo->getBaseName(), ['.git']);
-		    }
-		  )
+	    $files = new RecursiveIteratorIterator
+		(
+			new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
+			RecursiveIteratorIterator::CHILD_FIRST
 		);
 
 	    //$fileinfo as SplFileInfo
@@ -181,10 +175,11 @@ class File
 	 * Recursively deletes a directory.
 	 *
 	 * @param string $directory
+	 * 
 	 */
 	public function resetDirectory($directory)
 	{
-		$this->deleteDirectory($directory, true);
+		$this->deleteDirectory($this->normalizePath($directory), true);
 	}
 
 	/**
