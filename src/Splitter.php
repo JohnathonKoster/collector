@@ -155,7 +155,7 @@ class Splitter
 		
 		$alreadySplit = $this->alreadySplit();
 
-		// Perforom the git clone operations if we aren't skipping it.
+		// Perform the git clone operations if we aren't skipping it.
 		if (!$this->skipGitOperations) {
 			if ($this->onlyNewGitBranches && !$alreadySplit && !$this->localRepositoryExists() || !$this->onlyNewGitBranches) {
 				// For now, we will just completely remove the source directory
