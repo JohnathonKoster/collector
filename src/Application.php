@@ -18,6 +18,15 @@ class Application extends SymfonyApplication
     {
         parent::__construct('Collector', '1');
 
+        $this->registerEnvironmentConfiguration();
+    }
+
+    /**
+     * Registers the environment and configuration.
+     * 
+     */
+    protected function registerEnvironmentConfiguration()
+    {
         // Load the environment.
         (new Dotenv(__DIR__.'/../'))->load();
 
