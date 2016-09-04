@@ -3,6 +3,7 @@
 namespace Collector;
 
 use Dotenv\Dotenv;
+use ErrorException;
 use Collector\Commands;
 use Collector\Support\Config;
 use Dotenv\Exception\InvalidPathException;
@@ -18,7 +19,29 @@ class Application extends SymfonyApplication
     {
         parent::__construct('Collector', '1');
 
+        set_error_handler([$this, 'handleError']);
+
         $this->registerEnvironmentConfiguration();
+    }
+
+     /**
+     * Convert a PHP error to an ErrorException.
+     *
+     * @param  int  $level
+     * @param  string  $message
+     * @param  string  $file
+     * @param  int  $line
+     * @param  array  $context
+     * 
+     * @return void
+     *
+     * @throws \ErrorException
+     */
+    public function handleError($level, $message, $file = '', $line = 0, $context = [])
+    {
+        if ($level) {
+            throw new ErrorException($message, 0, $level, $file, $line);
+        }
     }
 
     /**
