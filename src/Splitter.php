@@ -141,6 +141,27 @@ class Splitter
 	}
 
 	/**
+	 * Performs the git clone operation.
+	 * 
+	 */
+	protected function doGitOperation()
+	{
+		// For now, we will just completely remove the source directory
+		// and create it again. Later, we can probably optimize this
+		// to just perform a git rebase or pull, but it works now.
+		$this->file->resetDirectory($this->paths->source);
+
+		// Create the git command.
+		$gitOperation = strtr(config('git.clone'), [
+			'@version@' => $remote,
+			'@source@'  => $this->paths->source
+		]);
+
+		$this->info("Cloning using '{$gitOperation}'");
+		$this->run($gitOperation);
+	}
+
+	/**
 	 * Orchestrates the actual split operation.
 	 *
 	 * @param string $remote
@@ -158,19 +179,7 @@ class Splitter
 		// Perform the git clone operations if we aren't skipping it.
 		if (!$this->skipGitOperations) {
 			if ($this->onlyNewGitBranches && !$alreadySplit && !$this->localRepositoryExists() || !$this->onlyNewGitBranches) {
-				// For now, we will just completely remove the source directory
-				// and create it again. Later, we can probably optimize this
-				// to just perform a git rebase or pull, but it works now.
-				$this->file->resetDirectory($this->paths->source);
-
-				// Create the git command.
-				$gitOperation = strtr(config('git.clone'), [
-					'@version@' => $remote,
-					'@source@'  => $this->paths->source
-				]);
-
-				$this->info("Cloning using '{$gitOperation}'");
-				$this->run($gitOperation);
+				$this->doGitOperation();
 			} else {
 				$this->line("Skipping git operations for {$remote}. Local copy already exists.");
 			}
