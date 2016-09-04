@@ -155,7 +155,7 @@ class Splitter
 		// For now, we will just completely remove the source directory
 		// and create it again. Later, we can probably optimize this
 		// to just perform a git rebase or pull, but it works now.
-		$this->file->resetDirectory($this->paths->source);
+		$this->file->deleteDirectory($this->paths->source);
 
 		// Create the git command.
 		$gitOperation = strtr(config('git.clone'), [
