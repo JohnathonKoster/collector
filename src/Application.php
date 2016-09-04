@@ -24,16 +24,16 @@ class Application extends SymfonyApplication
         $this->registerEnvironmentConfiguration();
     }
 
-     /**
-     * Convert a PHP error to an ErrorException.
+    /**
+     * Convert a PHP error to an ErrorException
+     * 
+     * @see https://github.com/laravel/framework/blob/7d116dc5a008e69c97f864af79ac46ab6a8d5895/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php#L44-L61
      *
-     * @param  int  $level
+     * @param  int     $level
      * @param  string  $message
      * @param  string  $file
-     * @param  int  $line
-     * @param  array  $context
-     * 
-     * @return void
+     * @param  integer $line
+     * @param  array   $context
      *
      * @throws \ErrorException
      */

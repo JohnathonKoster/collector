@@ -13,9 +13,26 @@ if (! function_exists('config')) {
     }
 }
 
+if (! function_exists('value')) {
+    /**
+     * Return the default value of the given value.
+     * 
+     * @see https://github.com/laravel/framework/blob/5.3/src/Illuminate/Support/helpers.php#L856-L867
+     * 
+     * @param  mixed  $value
+     * @return mixed
+     */
+    function value($value)
+    {
+        return $value instanceof Closure ? $value() : $value;
+    }
+}
+
 if (! function_exists('env')) {
     /**
      * Gets the value of an environment variable. Supports boolean, empty and null.
+     *
+     * @see https://github.com/laravel/framework/blob/5.3/src/Illuminate/Foundation/helpers.php#L427-L464
      *
      * @param  string  $key
      * @param  mixed   $default
