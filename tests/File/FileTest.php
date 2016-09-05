@@ -295,4 +295,66 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertFileExists($this->testFsDirectory.'/src/');
 	}
 
+	public function testThatFileCanRecursivelyDeleteADirectoryAndExcludeFolders()
+	{
+		$sourceFolder = __DIR__.'/../files/code/src/';
+		$this->file->copyDirectory($sourceFolder, $this->testFsDirectory.'/src/');
+
+		$structure = [
+			'Illuminate/Contracts/Support/Arrayable.php',
+			'Illuminate/Contracts/Support/Jsonable.php',
+			'Illuminate/Support/Traits/Macroable.php',
+			'Illuminate/Support/Collection.php',
+			'Illuminate/Support/helpers.php',
+			'Illuminate/Contracts/Support',
+			'Illuminate/Support/Arr.php',
+			'Illuminate/Support/Traits',
+			'Illuminate/Contracts',
+			'Illuminate/Support',
+			'Illuminate',
+		];
+
+		$this->file->makeDir($this->testFsDirectory.'/src/.git');
+
+		$this->file->deleteDirectory($this->testFsDirectory.'/src/', true, ['.git']);
+
+		foreach ($structure as $path) {
+			$this->assertFileNotExists($this->testFsDirectory.'/src/'.$path);
+		}
+
+		$this->assertFileExists($this->testFsDirectory.'/src/');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git');
+	}
+
+	public function testThatFileCanRecursivelyDeleteADirectoryAndExcludeFoldersWithImplicitRemoveOnlyChildren()
+	{
+		$sourceFolder = __DIR__.'/../files/code/src/';
+		$this->file->copyDirectory($sourceFolder, $this->testFsDirectory.'/src/');
+
+		$structure = [
+			'Illuminate/Contracts/Support/Arrayable.php',
+			'Illuminate/Contracts/Support/Jsonable.php',
+			'Illuminate/Support/Traits/Macroable.php',
+			'Illuminate/Support/Collection.php',
+			'Illuminate/Support/helpers.php',
+			'Illuminate/Contracts/Support',
+			'Illuminate/Support/Arr.php',
+			'Illuminate/Support/Traits',
+			'Illuminate/Contracts',
+			'Illuminate/Support',
+			'Illuminate',
+		];
+
+		$this->file->makeDir($this->testFsDirectory.'/src/.git');
+
+		$this->file->deleteDirectory($this->testFsDirectory.'/src/', false, ['.git']);
+
+		foreach ($structure as $path) {
+			$this->assertFileNotExists($this->testFsDirectory.'/src/'.$path);
+		}
+
+		$this->assertFileExists($this->testFsDirectory.'/src/');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git');
+	}
+
 }

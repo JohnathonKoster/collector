@@ -152,6 +152,17 @@ class File
 	    //$fileinfo as SplFileInfo
 	    foreach ($files as $fileinfo) {
 	        if ($fileinfo->isDir()) {
+
+	        	if (count($keepDirectories) > 0) {
+	        		$checkPath = mb_substr($this->normalizePath($fileinfo->getRealPath()), mb_strlen($this->normalizePath(realpath($source))) + 1);
+
+	        		foreach ($keepDirectories as $directoryToKeep) {
+	        			if (mb_substr($checkPath, 0, mb_strlen($directoryToKeep)) == $directoryToKeep) {
+	        				continue 2;
+	        			}
+	        		}
+
+	        	}
 	            if ($this->deleteDirectory($fileinfo->getRealPath()) === false) {
 	                return false;
 	            }
@@ -164,7 +175,7 @@ class File
 	        }
 	    }
 
-	    if ($removeOnlyChildren === false) {
+	    if (count($keepDirectories) == 0 && $removeOnlyChildren === false) {
 	        return rmdir($source);
 	    }
 
