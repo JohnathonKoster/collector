@@ -16,4 +16,27 @@ return [
     */
     'clone' => env('GIT_CLONE'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Git Publish Command
+    |--------------------------------------------------------------------------
+    |
+    | This option specifies the command that should be issued when the
+    | splitter has finished splitting new versions and needs to add
+    | them to the publishing git repository (git commit && tag).
+    |
+    */
+    'publish' => env('GIT_PUBLISH'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Git Update Command
+    |--------------------------------------------------------------------------
+    |
+    | This option specifies the command that should be issued when the
+    | utility has to push any update to the publish git repository.
+    |
+    */
+    'update' => env('GIT_UPDATE'),
+
 ];
