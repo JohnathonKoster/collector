@@ -12,12 +12,6 @@ class Tags extends Command
 
 	protected $tagManager;
 
-	public function __construct()
-	{
-		parent::__construct();
-		$this->tagManager = Factory::makeGitHubTagManager();
-	}
-
 	protected function configure()
 	{
 		$this->setName('collect:tags')
@@ -26,6 +20,7 @@ class Tags extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$this->tagManager = (new Factory)->make();
 		$tags = $this->tagManager->getCacheTags();
 		
 		$output->writeln('<info>Collected '.count($tags).' tags.</info>');
