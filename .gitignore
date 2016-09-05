@@ -1,6 +1,6 @@
 tests/files/fs
-vendor/
-tmp/
-output/
 publish/
+vendor/
+output/
 .env
+tmp/
