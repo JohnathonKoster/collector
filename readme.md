@@ -49,4 +49,26 @@ You may notice that the command contains placeholder variables (surrounded by th
 | `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
 | `@source@` | The path to the expected temporary directory that the Laravel framework version should be cloned into. | `/source/path/v5.3.6` |
 
+#### `git.publish` (`config/git.php` config file) or `GIT_PUBLISH` (`.env` file)
 
+The `publish` setting is used to specify the command that is used to commit __and__ tag the changes made for each version of the Illuminate Collection component that is split from the Laravel framework code-base. This command can be customized, but must accomplish the following tasks:
+
+> Note: The Collector utility will clear all of the files in the git repository on each iteration to ensure that only the files required for the current Collection component version are present. This clearing operation is __not__ destructive to the actual git repository.
+
+* Add the necessary files and commit them;
+* Create a new tag for the previous commit.
+
+The following example is the default setting that can be found in the `.env.example` file:
+
+```
+GIT_PUBLISH="git -C \"@publishDir@\" add --all && git -C \"@publishDir@\" commit -m \"Updated to @version@ changes.\" && git -C \"@publishDir@\" tag -a @version@ -m \"Updated to @version@ changes\""
+```
+
+> An important thing to note is that the default command specifies the git directory (via the `-C` switch). This is important to ensure that git commands are issued only against the target git repository.
+
+The following placeholders can be used when constructing your own command:
+
+| Placeholder | Description | Example |
+|---|---|---|
+| `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
+| `@publishDir@` | The path to the target git repository. | `/path/to/repository` |
