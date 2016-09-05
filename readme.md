@@ -90,3 +90,31 @@ The following placeholders can be used when constructing your own command:
 | `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
 | `@publishDir@` | The path to the target git repository. | `/path/to/repository` |
 
+### Tests Configuration
+
+There is only one test setting that needs to be configured. The Collector utility uses this command to run the tests on the split Collection component. This setting is important because the Collector utility will ensure that all the tests pass for the split Collection component before it adds the new version to the target git repository.
+
+#### `tests.run` (`config/tests.php` config file) or `TEST_RUN` (`.env` file)
+
+The `run` setting is used to specify the command that the Collector utility will use to run the tests on each split Collection component. You can customize the command to meet the needs of your specific environment, but it must accomplish the following tasks:
+
+* Update the dependencies for each Collection component;
+* Run the PHPUnit unit tests for each Collection component.
+
+The following example is the default setting that can be found in the `.env.example` file:
+
+```
+TEST_RUN="cd \"@outputDir@\" && composer update && php @vendor@/phpunit/phpunit/phpunit --no-globals-backup --bootstrap \"@bootstrap@\""
+```
+
+The following placeholders can be used when building your own command:
+
+| Placeholder | Description | Example |
+|---|---|---|
+| `@bootstrap@` | The path to the recommended test `bootstrap.php` file. | `collector/storage/tests/bootstrap.php` |
+| `@outputDir@` | The path to the output directory for the current Collection version. | `/output/path/v5.3.6` |
+| `@vendor@` | The path to the shared vendor folder for all Collection components. | `collector/vendor_test` |
+| `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
+
+When constructing your own command, it is highly recommended that you use the shared `vendor_test` directory (use the `@vendor@` placeholder and Collector will figure out the location for you) as well as the shared `bootstrap.php` test bootstrap file (again, use the `@bootstrap@` placeholder). This will let all split versions of the Illuminate Collection share dependencies and greatly speed up the testing process.
+
