@@ -72,3 +72,21 @@ The following placeholders can be used when constructing your own command:
 |---|---|---|
 | `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
 | `@publishDir@` | The path to the target git repository. | `/path/to/repository` |
+
+#### `git.update` (`config/git.php` config file) or `GIT_UPDATE` (`.env` file)
+
+The `update` setting is used to specify the command that is used to update the target git repository. This is generally done via a `git push`. Since the Collector utility makes extensive use of tags (to create releases on GitHub), the `update` command should also push the tags to the remote git repository.
+
+The following example is the default setting that can be found in the `.env.example` file:
+
+```
+GIT_UPDATE="git -C \"@publishDir@\" push --follow-tags"
+```
+
+The following placeholders can be used when constructing your own command:
+
+| Placeholder | Description | Example |
+|---|---|---|
+| `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
+| `@publishDir@` | The path to the target git repository. | `/path/to/repository` |
+
