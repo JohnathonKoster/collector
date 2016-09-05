@@ -19,7 +19,7 @@
     "require-dev": {
         "mockery/mockery": "~0.9.4",
         "phpunit/phpunit": "~5.4",
-        "mikey179/vfsStream": "1.5.*"
+        "mikey179/vfsStream": "1.6.*"
     },
     "autoload": {
         "files": [
