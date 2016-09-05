@@ -59,10 +59,15 @@ class Runner
 		];
 
 		$newJson = strtr($newJson, $mappings);
+
+		if (mb_strpos($composerJson, 'Support/helpers.php') === false) {
+			$this->warn("The original composer.json file did not contains helpers. Removing them from the test composer.json file");
+			$newJson = str_replace('"src/Illuminate/Support/helpers.php"', '', $newJson);
+		}
+
 		$this->info("Writing new the composer.json file required for testing...");
 		file_put_contents($composerJsonPath, $newJson);
 		
-
 		$testCommand = strtr(config('tests.run'), [
 			'@bootstrap@' => $bootstrapPath,
 			'@outputDir@' => $outputDirectory,
