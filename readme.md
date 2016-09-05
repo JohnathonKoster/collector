@@ -118,3 +118,80 @@ The following placeholders can be used when building your own command:
 
 When constructing your own command, it is highly recommended that you use the shared `vendor_test` directory (use the `@vendor@` placeholder and Collector will figure out the location for you) as well as the shared `bootstrap.php` test bootstrap file (again, use the `@bootstrap@` placeholder). This will let all split versions of the Illuminate Collection share dependencies and greatly speed up the testing process.
 
+### Split Configuration
+
+The `config/split.php` configuration file contains many different settings that can be used to alter the behavior of the Collector utility. The following sections will go through each of these settings and explain how they work, when you should use them (and when you shouldn't!).
+
+#### Splitter Operation Mode
+
+The splitter operation mode is set by modifying the `split.mode` configuration value. It can be either `auto` or `manual`. We will discuss the `manual` mode first.
+
+The manual mode will instruct the Collector utility to only split the versions you specify in the `split.versions` configuration entry. It is called _manual_ mode because you have to manage the list of versions to split yourself. This can be beneficial, especially when working with existing git repositories. This method also allows customization of the output version name. When specifying the versions to manually split, you must supply the target Laravel framework version as the key and the name of the output version as the value (in most situations, these will be the same):
+
+```php
+
+    // ...
+
+    /*
+    |--------------------------------------------------------------------------
+    | Remote Versions to Split
+    |--------------------------------------------------------------------------
+    |
+    | This option contains a list of all the remote branches the splitter
+    | tool should attempt to split the Collection library from. Using
+    | the keys, the splitter will create temporary directories for
+    | each remote branch. The value for the branch specifies an
+    | output directory name, where the generated library can
+    | be found, and then committed to the new repository.
+    |
+    */
+    'versions' => [
+        'v5.3.6' => 'v5.3.6'
+    ],
+
+    // ...
+```
+
+Running `php collector collect` will then split all the Collection components for the listed Laravel framework versions.
+
+When using the `auto` mode, you must indicate which version of the Laravel framework you would like the splitter to start with when splitting the Illuminate Collection components from the Laravel code-base. This is done by supplying a string value for the `split.start_with` configuration entry:
+
+
+```php
+
+// ...
+
+    /*
+    |--------------------------------------------------------------------------
+    | Release to Start With
+    |--------------------------------------------------------------------------
+    |
+    | The laravel framework release to start splitting Collections from.
+    |
+    */
+    'start_with' => 'v5.3.5',
+
+    // ...
+```
+
+> __NOTE__: The version specified in the `split.start_with` configuration entry will also be split. For example, if you already had a previous version of the Illuminate Collection component for `v5.3.5`, you might want to start with `v5.3.6` instead.
+
+The `split.tag_source` configuration entry is also something to consider when using the `auto` split operation mode. The `split.tag_source` determines where the Collector utility will get it's list of versions for the Laravel framework. It has two possible value:
+
+* __`GitHub`__: Uses the GitHub API to determine the most recent versions. Most accurate, but slightly slower and may not contain all of the older Laravel framework versions. Use this option to target _recent_ versions of the Laravel framework.
+* __`Array`__: Uses a pre-built list of Laravel framework versions. Much faster than the `GitHub` option, but has the potential to have a slight update delay after new Laravel framework versions are released. Use this option to target _all_ versions of the Laravel framework.
+
+
+#### Splitter Starting Classes
+
+The `split.classes` configuration entry determines which class the Collector utility should attempt to split. Generally, you will not have to change this list. However, if you receive errors about the `Arr.php` file missing in the generated output, you may add it here. The Collector utility is, for the most part, fully capable of resolving class dependencies all by itself.
+
+#### Splitter Replace Classes
+
+The `split.replace_class` configuration entry contains a list of class names that should automatically be transposed in the split Illuminate Collection component. Like the `split.classes` option, you will generally not have to worry about this configuration option. However, as an example of what it does, by default it will instruct the Collector utility to replace all occurences of `Illuminate\Database\Eloquent\Collection` with `Illuminate\Support\Collection`.
+
+#### Splitter Stubs
+
+The `split.stubs` configuration entry contains a list of files that should be copied to _every_ split Illuminate Collection component. Use this option to specify things such as image assets, readme files, licenses, etc.
+
+All stubs must be stored weithin the `/storage/stubs/` directory; when adding items to the `split.stubs` entry you must specify the path __relative__ to the storage directory.
