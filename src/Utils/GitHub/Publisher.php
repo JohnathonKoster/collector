@@ -71,6 +71,7 @@ class Publisher
 
 		$gitUpdate = strtr(config('git.update'), [
 			'@publishDir@' => $publishDir,
+			'@version@' => $version,
 		]);
 
 		$this->info("Updating git repository using\n{$gitCommand}");
