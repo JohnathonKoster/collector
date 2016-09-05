@@ -223,4 +223,47 @@ When the command is executing, the Collector utility will check which versions o
 5. The Collector utility will write a new `helpers.php` file in the destination directory containing only the helper functions actually called by the split Collection component.
 6. Add the version to the split history.
 7. Run the tests for the newly created Illuminate Collection component.
-8. If tests pass, the Collector will "publish" the newly created Illuminate Collection component to the destination git repository.
+8. If tests pass, the Collector will "publish" the newly created Illuminate Collection component to the destination git repository (configured via the `split.publish` configuration entry).
+
+The Collector utility will repeat those steps for _every_ version that needs to be split.
+
+### `collect` Flags
+
+The `collect` command accepts a number of different flags that can be used to alter how the utility runs. The following table explains each of the available flags.
+
+| Name | Shortcut | Description |
+|---|---|---|
+| `git` | `-g` | Forces the Collector utility to clone each version of Laravel framework needed each time it is ran. By default, the Collector utility will not clone copies of the Laravel framework if a version already exists in the temporary source directory (configured via the `split.source` configuration entry). |
+| `catchup` | `-c` | Similar to the `-g` flag, the `-c` flag instructs the Collector utility to only clone copies of the Laravel framework that it has not obtained yet during previous split operations. |
+| `force` | `-f` | Useful for debugging your environment configuration, the `-f` flag will cause the Collector utility to ignore the split history and run the split process against all configured versions of the Laravel framework when in __automatic__mode. |
+| `verbose` | `-v` | When in verbose mode, the Collector utility will display a large amount of detailed information related to the split process. Useful for debugging, or when you want to see the terminal explode with output. |
+
+The most common way to run the `collect` command is:
+
+```
+php collector collect -g -c
+```
+
+## Using the `collect:tags` Command
+
+The `collect:tags` command simply builds the Laravel framework version cache. This is automatically done by the `collect` command; calling the `collect:tags` command directly is not necessary.
+
+## Using the `test:output` Command
+
+The `test:output` command will run all the of the PHPUnit tests for all of the previously generated Illuminate Collection components. This command is useful to check the validity of the Collector utility output. This command __will__ take a while to run if there are a lot of versions to check. In fact, the testing phase is one of the main reasons the split process can be slow.
+
+## Clearing the Caches
+
+At times it may be necessary to clear the caches if you receive error messages related to the various caches the Collector maintains. These caches are located in the following locations (relative to the `collector` installation directory):
+
+| Cache Name | Location | Description |
+|---|---|---|
+| GitHub Tag Cache | `/storage/cache/github` | A cache of the requests made to the GitHub API. |
+| Laravel Framework Version Cache | `/storage/tags/remote.json` | A cache of all the Laravel Framework versions discovered by the Collector utility. |
+| Illuminate Component Split History | `/storage/tags/split.json` | A cache of all the versions the Collector utility has previously split. |
+
+All of the cache files can be deleted at any time without any serious side effects. The only one that you probably shouldn't delete that often is the Illuminate Component Split History cache since this is what will help to limit which versions are split in the future.
+
+## License
+
+The Collector utility is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
