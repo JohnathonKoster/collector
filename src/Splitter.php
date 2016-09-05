@@ -53,19 +53,6 @@ class Splitter
 		'.gitignore'
 	];
 
-	/**
-	 * The stubs to copy to every new split.
-	 *
-	 * @var array
-	 */
-	protected $requiredStubs = [
-		'phpunit.xml',
-		'collect-logo.png',
-		'readme.md',
-		'composer.json',
-		'tests/bootstrap.php'
-	];
-
 	public function __construct()
 	{
 		$this->file                = new File;
@@ -206,7 +193,7 @@ class Splitter
 				$this->report('Copying required files to output...');
 				$this->file->copyFiles($this->requiredFiles, $this->paths->source, $this->paths->output);
 				$this->report('Copying required stubs to output...');
-				$this->file->copyStubs($this->requiredStubs, $this->paths->output);
+				$this->file->copyStubs(config('split.stubs'), $this->paths->output);
 			} catch (ErrorException $e) {
 				// The most likely reason that we have entered into this catch
 				// block is that a split process was forcefully terminated;

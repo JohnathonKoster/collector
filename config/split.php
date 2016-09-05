@@ -122,4 +122,23 @@ return [
         'Illuminate\Database\Eloquent\Collection' => 'Illuminate\Support\Collection',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Copy Stubs
+    |--------------------------------------------------------------------------
+    |
+    | This option contains a list of all the stub files that should be copied
+    | to the newly created split component. Stubs can be anything, from an
+    | environment file common to all components to things like graphics
+    | assets and/or documentation files, such as license files, etc.
+    |
+    */
+   'stubs' => [
+        'phpunit.xml',
+        'collect-logo.png',
+        'readme.md',
+        'composer.json',
+        'tests/bootstrap.php'
+    ],
+
 ];
