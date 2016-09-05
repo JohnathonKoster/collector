@@ -25,11 +25,22 @@ class FileTest extends PHPUnit_Framework_TestCase
 	 */
 	protected $virtualPath = 'fst';
 
+	protected $testFsDirectory;
+
 	public function setUp()
 	{
 		$this->setUpVfs();
 		$this->file = new File;
 		$this->file->setCollectorRoot($this->getPath());
+
+		$this->testFsDirectory = __DIR__.'/../files/fs/';
+
+		if (file_exists($this->testFsDirectory)) {
+			$this->file->deleteDirectory($this->testFsDirectory, true);
+		} else {
+			$this->file->makeDir($this->testFsDirectory);
+		}
+
 	}
 
 	protected function getCodePath()
@@ -226,6 +237,62 @@ class FileTest extends PHPUnit_Framework_TestCase
 			}
 		}
 
+	}
+
+	public function testThatFileCanRecursivelyDeleteADirectory()
+	{
+		$sourceFolder = __DIR__.'/../files/code/src/';
+		$this->file->copyDirectory($sourceFolder, $this->testFsDirectory.'/src/');
+
+		$structure = [
+			'Illuminate/Contracts/Support/Arrayable.php',
+			'Illuminate/Contracts/Support/Jsonable.php',
+			'Illuminate/Support/Traits/Macroable.php',
+			'Illuminate/Support/Collection.php',
+			'Illuminate/Support/helpers.php',
+			'Illuminate/Contracts/Support',
+			'Illuminate/Support/Arr.php',
+			'Illuminate/Support/Traits',
+			'Illuminate/Contracts',
+			'Illuminate/Support',
+			'Illuminate',
+		];
+
+		$this->file->deleteDirectory($this->testFsDirectory.'/src/');
+
+		foreach ($structure as $path) {
+			$this->assertFileNotExists($this->testFsDirectory.'/src/'.$path);
+		}
+
+		$this->assertFileNotExists($this->testFsDirectory.'/src/');
+	}
+
+	public function testThatFileCanRecursivelyDeleteADirectoryButKeepParent()
+	{
+		$sourceFolder = __DIR__.'/../files/code/src/';
+		$this->file->copyDirectory($sourceFolder, $this->testFsDirectory.'/src/');
+
+		$structure = [
+			'Illuminate/Contracts/Support/Arrayable.php',
+			'Illuminate/Contracts/Support/Jsonable.php',
+			'Illuminate/Support/Traits/Macroable.php',
+			'Illuminate/Support/Collection.php',
+			'Illuminate/Support/helpers.php',
+			'Illuminate/Contracts/Support',
+			'Illuminate/Support/Arr.php',
+			'Illuminate/Support/Traits',
+			'Illuminate/Contracts',
+			'Illuminate/Support',
+			'Illuminate',
+		];
+
+		$this->file->deleteDirectory($this->testFsDirectory.'/src/', true);
+
+		foreach ($structure as $path) {
+			$this->assertFileNotExists($this->testFsDirectory.'/src/'.$path);
+		}
+
+		$this->assertFileExists($this->testFsDirectory.'/src/');
 	}
 
 }
