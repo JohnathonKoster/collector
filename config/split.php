@@ -15,7 +15,7 @@ return [
     | the "versions" option below; specifying the output dir.
     |
     */
-    'mode' => 'manual',
+    'mode' => 'auto',
 
     /*
     |--------------------------------------------------------------------------
@@ -25,7 +25,7 @@ return [
     | The laravel framework release to start splitting Collections from.
     |
     */
-    'start_with' => 'v5.2.32',
+    'start_with' => 'v5.3.5',
 
     /*
     |--------------------------------------------------------------------------
@@ -42,6 +42,18 @@ return [
     */
     'versions' => [
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Remote Version Tag Source
+    |--------------------------------------------------------------------------
+    |
+    | This option controls which class should be used when constructing
+    | the list of all releases for the remote Laravel git repository.
+    |
+    | Possible values are "GitHub" and "Array"
+    */
+    'tag_source' => 'GitHub',
 
     /*
     |--------------------------------------------------------------------------
