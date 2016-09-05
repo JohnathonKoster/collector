@@ -223,4 +223,4 @@ When the command is executing, the Collector utility will check which versions o
 5. The Collector utility will write a new `helpers.php` file in the destination directory containing only the helper functions actually called by the split Collection component.
 6. Add the version to the split history.
 7. Run the tests for the newly created Illuminate Collection component.
-8. If tets pass, the Collector will "publish" the newly created Illuminate Collection component to the destination git repository.
+8. If tests pass, the Collector will "publish" the newly created Illuminate Collection component to the destination git repository.
