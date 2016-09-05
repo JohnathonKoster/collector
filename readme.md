@@ -32,7 +32,7 @@ There are only three git settings that need to be configured. Each of them are i
 
 #### `git.cone` (`config/git.php` config file) or `GIT_CLONE` (`.env` file)
 
-The `clone` setting is used to clone versions of the [`laravel/framework`]http://github.com/laravel/framework) for the Collector utility. You can customize this command to suite your specific environment, but it __must__ accomplish the following tasks:
+The `clone` setting is used to specify the command that is used to clone versions of the [`laravel/framework`]http://github.com/laravel/framework) for the Collector utility. You can customize this command to suite your specific environment, but it __must__ accomplish the following tasks:
 
 * Clone the requested framework version into the correct temporary directory.
 
@@ -48,4 +48,5 @@ You may notice that the command contains placeholder variables (surrounded by th
 |---|---|---|
 | `@version@` | The version of the Laravel framework the Collector utility is current processing. | `v5.3.6` |
 | `@source@` | The path to the expected temporary directory that the Laravel framework version should be cloned into. | `/source/path/v5.3.6` |
+
 
