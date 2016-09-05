@@ -195,3 +195,13 @@ The `split.replace_class` configuration entry contains a list of class names tha
 The `split.stubs` configuration entry contains a list of files that should be copied to _every_ split Illuminate Collection component. Use this option to specify things such as image assets, readme files, licenses, etc.
 
 All stubs must be stored within the `/storage/stubs/` directory; when adding items to the `split.stubs` entry you must specify the path __relative__ to the storage directory.
+
+#### Splitter Directories
+
+There are three directories that need to be configured to use the Collector utility. These directories should be configured using the `.env` environment configuration file. __Make sure to specify the full path to these directories!__.
+
+The directories to configure are:
+
+* __`SPLIT_DIR_OUTPUT`__: The directory where all of the generated Illuminate Collection components will be stored. This directory is where the `GIT_CLONE` command is executed.
+* __`SPLIT_DIR_SOURCE`__: The directory where all of the required Laravel framework versions will be cloned into. The `TEST_RUN` command is executed within this directory.
+* __`SPLIT_DIR_PUBLISH`__: The directory where all of the publishing actions will be performed. This is generally an existing git repository; this is where the `GIT_PUBLISH` and `GIT_UPDATE` commands are executed.
