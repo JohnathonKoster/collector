@@ -247,6 +247,11 @@ class Splitter
 				$this->paths->collection, $this->paths->output.'/src/Illuminate/Support/Collection.php'
 			);
 
+			file_put_contents($this->paths->output.'/.collector.json', json_encode([
+				'version' => $destination,
+				'time'    => time()
+			]));
+
 			$this->history->addSplitToHistory($destination);
 
 			$this->info("Starting test runner...");
