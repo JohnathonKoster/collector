@@ -191,4 +191,41 @@ class FileTest extends PHPUnit_Framework_TestCase
 		$this->assertFileExists($virutalDestinationStubTwo);
 	}
 
+	public function testThatDirectoriesCanBeCopiedRecursively()
+	{
+		$testFolder = __DIR__.'/../files/code/src/';
+
+		$this->file->copyDirectory($testFolder, $this->getPath('src'));
+
+		$structure = [
+			'Illuminate/Contracts/Support/Arrayable.php',
+			'Illuminate/Contracts/Support/Jsonable.php',
+			'Illuminate/Support/Traits/Macroable.php',
+			'Illuminate/Support/Collection.php',
+			'Illuminate/Support/helpers.php',
+			'Illuminate/Contracts/Support',
+			'Illuminate/Support/Arr.php',
+			'Illuminate/Support/Traits',
+			'Illuminate/Contracts',
+			'Illuminate/Support',
+			'Illuminate',
+		];
+
+		$this->assertFileExists($this->getPath('src'));
+
+		foreach ($structure as $path) {
+			$virtualPath = $this->getPath('src/'.$path);
+			$originPath  = $testFolder.$path;
+			$this->assertFileExists($virtualPath);
+
+			if (is_file($originPath)) {
+				$virtualContents = normalize_line_endings(file_get_contents($virtualPath));
+				$originContents  = normalize_line_endings(file_get_contents($originPath));
+
+				$this->assertSame($originContents, $virtualContents);
+			}
+		}
+
+	}
+
 }
