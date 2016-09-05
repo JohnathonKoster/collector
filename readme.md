@@ -205,3 +205,22 @@ The directories to configure are:
 * __`SPLIT_DIR_OUTPUT`__: The directory where all of the generated Illuminate Collection components will be stored. This directory is where the `GIT_CLONE` command is executed.
 * __`SPLIT_DIR_SOURCE`__: The directory where all of the required Laravel framework versions will be cloned into. The `TEST_RUN` command is executed within this directory.
 * __`SPLIT_DIR_PUBLISH`__: The directory where all of the publishing actions will be performed. This is generally an existing git repository; this is where the `GIT_PUBLISH` and `GIT_UPDATE` commands are executed.
+
+## Using the `collect` Command
+
+The `collect` command is used to perform the actual process of splitting out all of the required versions of the Illuminate Collection component. It is a simple command to use, and the most basic way to use it is by simply calling it like so:
+
+```
+php collector collect
+```
+
+When the command is executing, the Collector utility will check which versions of the Illuminate Collection components need to be split (the Collector maintains a history of versions previously split). When it has found a version that it needs to split, it will do the following actions in order:
+
+1. Obtain a copy of the Laravel framework for the specified version (such as `v5.3.6`.
+2. Copy known files to the destination directory (things such as the test suites and `.gitignore` files). If this operation fails, it is most likely that a problem occurred during step one. The Collector will attempt steps one and two twice before failing.
+3. Analyze the Laravel framework source code (obtained in step one) to find any additional dependencies that will be required in the final split version (things like `Arr.php` and `Traits/Macroable.php` are discovered in this step).
+4. The Collector will analyze the dependencies discovered in step three to find any helper function calls (it will analyze the `src/Illuminate/Support/helpers.php` file in the Laravel code-base to get a list of helper functions to search for).
+5. The Collector utility will write a new `helpers.php` file in the destination directory containing only the helper functions actually called by the split Collection component.
+6. Add the version to the split history.
+7. Run the tests for the newly created Illuminate Collection component.
+8. If tets pass, the Collector will "publish" the newly created Illuminate Collection component to the destination git repository.
