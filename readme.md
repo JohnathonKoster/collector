@@ -30,7 +30,7 @@ The `.env.example` file shows all of the environment variables that _must_ be se
 
 There are only three git settings that need to be configured. Each of them are important to ensure the successful split of the Illuminate Collection component.
 
-#### `git.cone` (config file) or `GIT_CLONE` (`.env` file)
+#### `git.cone` (`config/git.php` config file) or `GIT_CLONE` (`.env` file)
 
 The `clone` setting is used to clone versions of the [`laravel/framework`]http://github.com/laravel/framework) for the Collector utility. You can customize this command to suite your specific environment, but it __must__ accomplish the following tasks:
 
