@@ -194,4 +194,4 @@ The `split.replace_class` configuration entry contains a list of class names tha
 
 The `split.stubs` configuration entry contains a list of files that should be copied to _every_ split Illuminate Collection component. Use this option to specify things such as image assets, readme files, licenses, etc.
 
-All stubs must be stored weithin the `/storage/stubs/` directory; when adding items to the `split.stubs` entry you must specify the path __relative__ to the storage directory.
+All stubs must be stored within the `/storage/stubs/` directory; when adding items to the `split.stubs` entry you must specify the path __relative__ to the storage directory.
