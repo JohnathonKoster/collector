@@ -163,10 +163,23 @@ class File
 	        		}
 
 	        	}
+	        	
 	            if ($this->deleteDirectory($fileinfo->getRealPath()) === false) {
 	                return false;
 	            }
 	        } else {
+
+	        	if (count($keepDirectories) > 0) {
+	        		$checkPath = mb_substr($this->normalizePath($fileinfo->getRealPath()), mb_strlen($this->normalizePath(realpath($source))) + 1);
+
+	        		foreach ($keepDirectories as $directoryToKeep) {
+	        			if (mb_substr($checkPath, 0, mb_strlen($directoryToKeep)) == $directoryToKeep) {
+	        				continue 2;
+	        			}
+	        		}
+
+	        	}
+
 	        	// Permissions hack, we're just deleting all this stuff anyway right now.
 	        	chmod($fileinfo->getRealPath(), 0777);
 	            if (unlink($fileinfo->getRealPath()) === false) {

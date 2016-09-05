@@ -315,6 +315,10 @@ class FileTest extends PHPUnit_Framework_TestCase
 		];
 
 		$this->file->makeDir($this->testFsDirectory.'/src/.git');
+		$this->file->makeDir($this->testFsDirectory.'/src/.git/hooks');
+		file_put_contents($this->testFsDirectory.'/src/.git/config', 'nada');
+		file_put_contents($this->testFsDirectory.'/src/.git/description', 'nada');
+		file_put_contents($this->testFsDirectory.'/src/.git/HEAD', 'nada');
 
 		$this->file->deleteDirectory($this->testFsDirectory.'/src/', true, ['.git']);
 
@@ -324,6 +328,10 @@ class FileTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($this->testFsDirectory.'/src/');
 		$this->assertFileExists($this->testFsDirectory.'/src/.git');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/hooks');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/config');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/description');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/HEAD');
 	}
 
 	public function testThatFileCanRecursivelyDeleteADirectoryAndExcludeFoldersWithImplicitRemoveOnlyChildren()
@@ -346,6 +354,10 @@ class FileTest extends PHPUnit_Framework_TestCase
 		];
 
 		$this->file->makeDir($this->testFsDirectory.'/src/.git');
+		$this->file->makeDir($this->testFsDirectory.'/src/.git/hooks');
+		file_put_contents($this->testFsDirectory.'/src/.git/config', 'nada');
+		file_put_contents($this->testFsDirectory.'/src/.git/description', 'nada');
+		file_put_contents($this->testFsDirectory.'/src/.git/HEAD', 'nada');
 
 		$this->file->deleteDirectory($this->testFsDirectory.'/src/', false, ['.git']);
 
@@ -355,6 +367,11 @@ class FileTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($this->testFsDirectory.'/src/');
 		$this->assertFileExists($this->testFsDirectory.'/src/.git');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/hooks');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/config');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/description');
+		$this->assertFileExists($this->testFsDirectory.'/src/.git/HEAD');
+
 	}
 
 }
