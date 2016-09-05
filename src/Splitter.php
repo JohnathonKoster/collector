@@ -7,6 +7,7 @@ use ErrorException;
 use Collector\Utils\File;
 use Collector\Utils\Notifier;
 use Collector\Utils\Tests\Runner;
+use Collector\Utils\GitHub\Publisher;
 use Collector\Utils\Analyzer\Analyzer;
 use Collector\Utils\VersionHistoryManager;
 use Collector\Utils\Helpers\Collector as HelperCollector;
@@ -33,6 +34,8 @@ class Splitter
 	protected $history;
 
 	protected $testRunner;
+
+	protected $publisher;
 
 	protected $forceSplit = false;
 
@@ -71,6 +74,7 @@ class Splitter
 		$this->dependencyCollector = new DependencyCollector;
 		$this->history             = new VersionHistoryManager;
 		$this->testRunner          = new Runner;
+		$this->publisher           = new Publisher;
 		$this->history->load(__DIR__.'/../storage/cache/tags/split.json');
 	}
 
@@ -83,8 +87,10 @@ class Splitter
 	{
 		$this->setNotifier($notifier);
 		$this->file->setNotifier($notifier);
+		$this->publisher->setNotifiers($notifier);
 		$this->helperCollector->setNotifiers($notifier);
 		$this->dependencyCollector->setNotifiers($notifier);
+		$this->testRunner->setNotifiers($notifier);
 	}
 
 	/**
@@ -243,8 +249,16 @@ class Splitter
 
 			$this->history->addSplitToHistory($destination);
 
+			$this->info("Starting test runner...");
+
 			if ($this->testRunner->runTestsOn($destination) == 0) {
 				$this->report("Tests passed for {$destination}");
+
+				if (config('git.publish') !== null) {
+					$publishResult = $this->publisher->publish($destination);
+					$this->publisher->updateRepository();
+				}
+
 			}
 
 		} else {
