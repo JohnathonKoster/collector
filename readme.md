@@ -2,6 +2,26 @@
 
 The `collector` tool attempts to automate the process of splitting the `Illuminate\Support\Collection` component from the Laravel code-base. It strives to solve this issue: https://github.com/tightenco/collect/issues/2. The output of this utility can be viewed at https://github.com/JohnathonKoster/collector-output-test (it is not recommended to use the releases within the `collector-output-test` repository directly; instead, use Tighten Co's repository).
 
+* [Download and Installation](https://github.com/JohnathonKoster/collector/blob/master/readme.md#download-and-installation)
+* [Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#configuration)
+    * [Environment Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#configuration)
+    * [git Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#configuration)
+        * [`git.clone` Configuration] (https://github.com/JohnathonKoster/collector/blob/master/readme.md#gitcone-configgitphp-config-file-or-git_clone-env-file)
+        * [`git.publish` Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#gitpublish-configgitphp-config-file-or-git_publish-env-file)
+        * [`git.update` Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#gitupdate-configgitphp-config-file-or-git_update-env-file)
+    * [Tests Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#tests-configuration)
+    * [Split Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#split-configuration)
+        * [Operating Mode](https://github.com/JohnathonKoster/collector/blob/master/readme.md#splitter-operation-mode)
+        * [Starting Classes](https://github.com/JohnathonKoster/collector/blob/master/readme.md#splitter-starting-classes)
+        * [Replacing Classes](https://github.com/JohnathonKoster/collector/blob/master/readme.md#splitter-replace-classes)
+        * [Stub Files](https://github.com/JohnathonKoster/collector/blob/master/readme.md#splitter-stubs)
+        * [Directory Configuration](https://github.com/JohnathonKoster/collector/blob/master/readme.md#splitter-directories)
+* [Using the `collect` Command](https://github.com/JohnathonKoster/collector/blob/master/readme.md#using-the-collect-command)
+    * [`collect` Flags](https://github.com/JohnathonKoster/collector/blob/master/readme.md#collect-flags)
+*  [Using the `test:output` Command](https://github.com/JohnathonKoster/collector/blob/master/readme.md#using-the-collecttags-command)
+*  [Clearing the Caches](https://github.com/JohnathonKoster/collector/blob/master/readme.md#clearing-the-caches)
+*  [License](https://github.com/JohnathonKoster/collector/blob/master/readme.md#license)
+
 ## Download and Installation
 
 The easiest way to download the Collector utility is just to clone the repository:
