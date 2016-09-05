@@ -109,6 +109,15 @@ return [
     ],
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Replace Classes
+    |--------------------------------------------------------------------------
+    |
+    | This option contains a list of all the class that should automatically
+    | be auto-rewritten in the final version of the Collection component.
+    |
+    */
     'replace_class' => [
         'Illuminate\Database\Eloquent\Collection' => 'Illuminate\Support\Collection',
     ],
