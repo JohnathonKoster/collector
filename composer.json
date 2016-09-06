@@ -1,5 +1,5 @@
 {
-    "name": "stillat/collector",
+    "name": "JohnathonKoster/collector",
     "description": "Sorcery to automatically split the Collection component from the Laravel code-base.",
     "license": "MIT",
     "authors": [
